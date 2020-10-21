@@ -18,20 +18,22 @@ prefix ="''"
 
 app = commands.Bot(command_prefix=prefix)
 
-token = 'NzY1NDM0MDU1MDE2ODQxMjU4.X4UwAw.LpogQ89T_3zQwlCmygk-_8K3m7o'
+token = 'NzY1NDM0MDU1MDE2ODQxMjU4.X4UwAw.Q3L-hir9EVtpjHVrBzDUzTSLxPc'
 
 category_list = [
     '지원',
     '일반',
     '관리자',
-    '수학'
+    '수학',
+    '재미 및 포인트'
 ]
 
 category_explain = [
     '`도움`, `봇정보`',
     '`정보`, `출석`, `소개설정`, `파일생성`',
     '`밴`, `언밴`',
-    '`사칙연산`, `일차풀기`'
+    '`사칙연산`, `일차풀기`',
+    '`도박`'
 ]
 
 func_list = [
@@ -44,7 +46,8 @@ func_list = [
     '언밴',
     '파일생성',
     '사칙연산',
-    '일차풀기'
+    '일차풀기',
+    '도박'
 ]
 
 func_footer = [
@@ -57,7 +60,8 @@ func_footer = [
     '언밴 (멤버 멘션)',
     '파일생성 (제목) (내용)',
     '사칙연산 (수) (연산자) (수)',
-    '일차풀기 (미지수 단위) (a) (b) (c)'
+    '일차풀기 (미지수 단위) (a) (b) (c)',
+    '도박 (걸 포인트)'
 ]
 
 func_explain = [
@@ -70,7 +74,8 @@ func_explain = [
     '봇 사용 금지 해제 (관리자 전용)',
     '파일 만들어서 올려줌 (파일명 한글은 미적용)',
     '사칙연산 수행(+, -, *, /)',
-    '일차방정식의 해 구하기 (ax+b=c)'
+    '일차방정식의 해 구하기 (ax+b=c)',
+    '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배)'
 ]
 
 embedcolor = 0x00ffff
@@ -336,6 +341,54 @@ async def _ban(ctx, member: Member):
         else:
             await ctx.send('권한이 없습니다')
 
+#재미 및 포인트 카테고리
+
+@app.command(name='도박')
+async def _dobac(ctx, don):
+    if isbanned(ctx.author.id) or ctx.author.bot:
+        await ctx.send('명령어 사용 불가')
+    else:
+        try:
+            a = float(don)
+        except SyntaxError:
+            await ctx.send('정수를 써 주세요')
+        if '.' in str(don):
+            await ctx.send('정수를 써 주세요')
+        elif don > 20:
+            await ctx.send('너무 많이 걸었어요 20 이하만 걸어 주세요')
+        else:
+            pointroute = f'{ctx.author.id}.txt'
+            try:
+                a = open(pointroute, 'r')
+            except FileNotFoundError:
+                a = open(pointroute, 'w')
+                a.write('0')
+            a.close()
+            a = open(pointroute, 'r')
+            point = int(a.read())
+            a.close()
+            if int(don) > int(point):
+                await ctx.send('건 돈이 너무 많습니다')
+            else:
+                winlose = randint(0,1)
+                if winlose == 1:
+                    msgembed = Embed(title='도박', description=f'이겼습니다!!! \n {don}의 2배만큼의 포인트를 획득했어요!', color=embedcolor)
+                    a = open(pointroute, 'w')
+                    a.write(str(int(point) + (2*int(don))))
+                    a.close()
+                else:
+                    msgembed = Embed(title='도박', description=f'졌습니다..... \n {don}의 2배만큼의 포인트를 잃었어요....', color=errorcolor)
+                    if (int(point) - 2*(int(don))) < 0:
+                        a = open(pointroute, 'w')
+                        a.write('0')
+                        a.close()
+                    else:
+                        a = open(pointroute, 'w')
+                        a.write(str(int(point) - (2*int(don))))
+                        a.close()
+                msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
+                await ctx.send(embed=msgembed)
+
 #에러 처리
 
 @_help.error
@@ -343,6 +396,7 @@ async def _help_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         msgembed = Embed(title='도움', description='도움말', color=embedcolor)
         msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
+        msgembed.add_field(name='재미 및 포인트', value='`포인트 관련 명령어들`')
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
