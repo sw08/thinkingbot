@@ -25,7 +25,7 @@ category_list = [
     '일반',
     '관리자',
     '수학',
-    '재미 및 포인트'
+    '포인트'
 ]
 
 category_explain = [
@@ -353,7 +353,7 @@ async def _ban(ctx, member: Member):
         else:
             await ctx.send('권한이 없습니다')
 
-#재미 및 포인트 카테고리
+#포인트 카테고리
 '''
 @app.command(name='도박')
 async def _dobac(ctx, don):
@@ -367,7 +367,7 @@ async def _help_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         msgembed = Embed(title='도움', description='도움말', color=embedcolor)
         msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
-        msgembed.add_field(name='재미 및 포인트', value='`포인트 관련 명령어들`')
+        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`')
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
