@@ -29,7 +29,7 @@ category_list = [
 ]
 
 category_explain = [
-    '`도움`, `봇정보`',
+    '`도움`, `봇정보`, `핑`',
     '`정보`, `출석`, `소개설정`, `파일생성`',
     '`밴`, `언밴`',
     '`사칙연산`, `일차풀기`',
@@ -47,7 +47,8 @@ func_list = [
     '파일생성',
     '사칙연산',
     '일차풀기',
-    '도박'
+    '도박',
+    '핑'
 ]
 
 func_footer = [
@@ -61,7 +62,8 @@ func_footer = [
     '파일생성 (제목) (내용)',
     '사칙연산 (수) (연산자) (수)',
     '일차풀기 (미지수 단위) (a) (b) (c)',
-    '도박 (걸 포인트)'
+    '도박 (걸 포인트)',
+    '핑'
 ]
 
 func_explain = [
@@ -75,7 +77,8 @@ func_explain = [
     '파일 만들어서 올려줌 (파일명 한글은 미적용)',
     '사칙연산 수행(+, -, *, /)',
     '일차방정식의 해 구하기 (ax+b=c)',
-    '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배)'
+    '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배) - 개발중',
+    '핑을 측정'
 ]
 
 embedcolor = 0x00ffff
@@ -266,9 +269,9 @@ async def _botinfo(ctx):
     else:
         msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
         msgembed.add_field(name='개발자', value='yswysw#9328')
-        msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님 등 많은 분들께 감사드립니다.', inline=False)
+        msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 등 많은 분들께 감사드립니다.', inline=False)
         msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-        msgembed.add_field(name='버전', value='Beta 0.4.2 - 20201022 릴리즈', inline=False)
+        msgembed.add_field(name='버전', value='Beta 0.4.23 - 20201022 릴리즈', inline=False)
         msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
         msgembed.add_field(name='개발환경', value='윈도우10, Visual Studio Code', inline=False)
         msgembed.add_field(name='공식 서포트 서버', value='https://discord.gg/ASvgRjX', inline=False)
@@ -294,6 +297,14 @@ async def _help(ctx, what_you_look_for):
             msgembed = Embed(title='에러', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
             msgembed.set_footer(text=f'{prefix}도움 커맨드 써보라고 | {ctx.author}')
         await ctx.send(embed=msgembed)
+
+@app.command(name='핑')
+async def _ping(ctx):
+    if isbanned(ctx.author.id):
+        await ctx.send('명령어 사용 불가')
+    else:
+        la = app.latency
+        await ctx.send(f'Ping: {str(round(la * 1000))}ms')
 
 #관리자 카테고리
 
@@ -367,7 +378,7 @@ async def _help_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         msgembed = Embed(title='도움', description='도움말', color=embedcolor)
         msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
-        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`')
+        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들` - 개발중')
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
