@@ -94,6 +94,25 @@ def is_owner():
         return ctx.author.id == 745848200195473490
     return commands.check(predicate)
 
+def readpoint(id):
+    pointroute = f'{id}.txt'
+    try:
+        a = open(pointroute, 'r').read()
+    except FileNotFoundError:
+        a = open(pointroute, 'w').close()
+        a = 0
+    return a
+
+def writepoint(id, addpoint):
+    pointroute = f'{id}.txt'
+    try:
+        a = open(pointroute, 'r').read().close()
+    except FileNotFoundError:
+        a = open(pointroute, 'w').write('0').close()
+        a = '0'
+    b = open(pointroute, 'w')
+    b.write(str(int(a)+int(addpoint))).close()
+
 #이벤트 처리
 
 @app.event
@@ -113,7 +132,7 @@ async def on_command_error(ctx, error):
 #일반 카테고리
 @app.command(name='출석')
 async def _chulseok(ctx):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         date = time.strftime('%Y%m%d', time.localtime(time.time()))
@@ -147,7 +166,7 @@ async def _chulseok(ctx):
 
 @app.command(name='소개설정')
 async def _setInfo(ctx, *, content):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         pointroute = f'{ctx.author.id}_info.txt'
@@ -158,7 +177,7 @@ async def _setInfo(ctx, *, content):
     
 @app.command(name='정보')
 async def _info(ctx):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         pointroute = f'{ctx.author.id}_info.txt'
@@ -177,22 +196,14 @@ async def _info(ctx):
         msgembed = Embed(title=str(ctx.author), description=userinfo, color=0x00ffff)
         msgembed.set_thumbnail(url=str(ctx.author.avatar_url))
         msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
-        try:
-            a = open(pointroute, 'r')
-        except FileNotFoundError:
-            a = open(pointroute, 'w')
-            a.write('0')
-        a.close()
-        a = open(pointroute, 'r')
-        point = a.read()
-        a.close()
+        point = readpoint(f'{ctx.author.id}')
         msgembed.add_field(name='유저 포인트', value=point)
         msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
         await ctx.send(embed=msgembed)
 
 @app.command(name='파일생성')
 async def _makefile(ctx, filename, *, content):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         a = open(filename, 'w')
@@ -206,7 +217,7 @@ async def _makefile(ctx, filename, *, content):
 
 @app.command(name='사칙연산')
 async def _calcul(ctx, n1, operator, n2):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         b = True
@@ -231,7 +242,7 @@ async def _calcul(ctx, n1, operator, n2):
 
 @app.command(name='일차풀기')
 async def _calcul(ctx, operator, a, b, c):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         msgembed = Embed(title='일차풀기', description='', color=embedcolor)
@@ -250,24 +261,25 @@ async def _calcul(ctx, operator, a, b, c):
 
 @app.command(name='봇정보')
 async def _botinfo(ctx):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
-        msgembed = Embed(title='봇정보', color=embedcolor)
+        msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
         msgembed.add_field(name='개발자', value='yswysw#9328')
-        msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님 등 많은 분들께 감사드립니다.')
-        msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음')
-        msgembed.add_field(name='버전', value='Beta 0.3')
-        msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py')
-        msgembed.add_field(name='개발OS', value='윈도우10')
-        msgembed.add_field(name='공식 서포트 서버', value='https://discord.gg/ASvgRjX')
-        msgembed.add_field(name='봇 초대 링크', value='https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot')
+        msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님 등 많은 분들께 감사드립니다.', inline=False)
+        msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
+        msgembed.add_field(name='버전', value='Beta 0.4 - 20201022 릴리즈', inline=False)
+        msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
+        msgembed.add_field(name='개발환경', value='윈도우10, Visual Studio Code', inline=False)
+        msgembed.add_field(name='공식 서포트 서버', value='https://discord.gg/ASvgRjX', inline=False)
+        msgembed.add_field(name='봇 초대 링크', value='https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot', inline=False)
+        msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
         msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
         await ctx.send(embed=msgembed)
 
 @app.command(name='도움')
 async def _help(ctx, what_you_look_for):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         if what_you_look_for in func_list:
@@ -287,7 +299,7 @@ async def _help(ctx, what_you_look_for):
 
 @app.command(name='밴')
 async def _ban(ctx, member: Member):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         if ctx.author.id == 745848200195473490:
@@ -315,7 +327,7 @@ async def _ban(ctx, member: Member):
 
 @app.command(name='언밴')
 async def _ban(ctx, member: Member):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         if ctx.author.id == 745848200195473490:
@@ -342,53 +354,12 @@ async def _ban(ctx, member: Member):
             await ctx.send('권한이 없습니다')
 
 #재미 및 포인트 카테고리
-
+'''
 @app.command(name='도박')
 async def _dobac(ctx, don):
-    if isbanned(ctx.author.id) or ctx.author.bot:
+    if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
-    else:
-        try:
-            a = float(don)
-        except SyntaxError:
-            await ctx.send('정수를 써 주세요')
-        if '.' in str(don):
-            await ctx.send('정수를 써 주세요')
-        elif don > 20:
-            await ctx.send('너무 많이 걸었어요 20 이하만 걸어 주세요')
-        else:
-            pointroute = f'{ctx.author.id}.txt'
-            try:
-                a = open(pointroute, 'r')
-            except FileNotFoundError:
-                a = open(pointroute, 'w')
-                a.write('0')
-            a.close()
-            a = open(pointroute, 'r')
-            point = int(a.read())
-            a.close()
-            if int(don) > int(point):
-                await ctx.send('건 돈이 너무 많습니다')
-            else:
-                winlose = randint(0,1)
-                if winlose == 1:
-                    msgembed = Embed(title='도박', description=f'이겼습니다!!! \n {don}의 2배만큼의 포인트를 획득했어요!', color=embedcolor)
-                    a = open(pointroute, 'w')
-                    a.write(str(int(point) + (2*int(don))))
-                    a.close()
-                else:
-                    msgembed = Embed(title='도박', description=f'졌습니다..... \n {don}의 2배만큼의 포인트를 잃었어요....', color=errorcolor)
-                    if (int(point) - 2*(int(don))) < 0:
-                        a = open(pointroute, 'w')
-                        a.write('0')
-                        a.close()
-                    else:
-                        a = open(pointroute, 'w')
-                        a.write(str(int(point) - (2*int(don))))
-                        a.close()
-                msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
-                await ctx.send(embed=msgembed)
-
+    else:'''
 #에러 처리
 
 @_help.error
