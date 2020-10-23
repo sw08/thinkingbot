@@ -365,12 +365,13 @@ async def _ban(ctx, member: Member):
             await ctx.send('권한이 없습니다')
 
 #포인트 카테고리
-'''
-@app.command(name='도박')
+
+'''@app.command(name='도박')
 async def _dobac(ctx, don):
     if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:'''
+
 #에러 처리
 
 @_help.error
