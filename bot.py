@@ -77,7 +77,7 @@ func_explain = [
     '파일 만들어서 올려줌 (파일명 한글은 미적용)',
     '사칙연산 수행(+, -, *, /)',
     '일차방정식의 해 구하기 (ax+b=c)',
-    '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배) - 개발중',
+    '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배)',
     '핑을 측정'
 ]
 
@@ -107,17 +107,14 @@ def readpoint(id):
         a.write('0')
         b = '0'
     a.close()
-    return int(b)
+    b = int(b)
+    return b
 
 def writepoint(id, addpoint):
     pointroute = f'{id}.txt'
-    try:
-        a = open(pointroute, 'r').read().close()
-    except FileNotFoundError:
-        a = open(pointroute, 'w').write('0').close()
-        a = '0'
-    b = open(pointroute, 'w')
-    b.write(str(addpoint)).close()
+    a = open(pointroute, 'w')
+    a.write(addpoint)
+    a.close()
 
 #이벤트 처리
 
@@ -142,18 +139,12 @@ async def _chulseok(ctx):
         await ctx.send('명령어 사용 불가')
     else:
         date = time.strftime('%Y%m%d', time.localtime(time.time()))
-        check = False
         ifyouchulseoked = f'{date}/{ctx.author.id}.txt'
         if not os.path.isdir(f'{date}/'):
-            os.makedirs(f'{date}')
-        try:
-            b = open(ifyouchulseoked, 'r')
-        except FileNotFoundError:
-            b = open(ifyouchulseoked, 'w').close()
-            check = True
-        if check:
+            os.makedirs(f'{date}/')
+        if not os.path.isfile(f'{date}/{ctx.author.id}.txt'):
             point = readpoint(ctx.author.id)
-            writepoint(ctx.author.id, 1)
+            writepoint(ctx.author.id, 1+point)
             await ctx.send('정상적으로 출석되었습니다')
         else:
             await ctx.send('이미 출석하셨습니다 내일 다시 오세요')
@@ -365,19 +356,19 @@ async def _dobac(ctx, don):
         point = readpoint(ctx.author.id)
         if int(don) > point:
             await ctx.send('**돈이 부족합니다**')
-        elif float(int(don)) != float(don) or float(don) <= 0:     #정수인가
+        elif (float(int(don)) != float(don)) or (float(don) <= 0):
             await ctx.send('**도박은 자연수만 받습니다**')
         else:
             winorlose = randint(0, 1)
-            if winorlose == 1:      #이김
-                writepoint(ctx.author.id, point+int(don))
+            if winorlose == 1:
+                writepoint(ctx.author.id, str(point+int(don)))
                 msgembed = Embed(title='와아아아아아', description='이겼습니다!!!!!', color=embedcolor)
             else:
                 if point-int(don) < 0:
-                    writepoint(ctx.author.id, 0)
+                    writepoint(ctx.author.id, '0')
                 else:
-                    writepoint(ctx.author.id, point-int(don))
-                    msgembed = Embed(title='에이이이이이', description='졌습니다......', color=errorcolor)
+                    writepoint(ctx.author.id, str(point-int(don)))
+                msgembed = Embed(title='에이이이이이', description='졌습니다......', color=errorcolor)
             msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
             await ctx.send(embed=msgembed)
 
@@ -388,7 +379,7 @@ async def _help_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         msgembed = Embed(title='도움', description='도움말', color=embedcolor)
         msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
-        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들` - 개발중')
+        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`')
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
