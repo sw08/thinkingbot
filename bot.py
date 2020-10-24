@@ -33,7 +33,7 @@ category_explain = [
     '`정보`, `출석`, `소개설정`, `파일생성`',
     '`밴`, `언밴`',
     '`사칙연산`, `일차풀기`',
-    '`도박`'
+    '`도박`, `송금`'
 ]
 
 func_list = [
@@ -48,7 +48,8 @@ func_list = [
     '사칙연산',
     '일차풀기',
     '도박',
-    '핑'
+    '핑',
+    '송금'
 ]
 
 func_footer = [
@@ -63,7 +64,8 @@ func_footer = [
     '사칙연산 (수) (연산자) (수)',
     '일차풀기 (미지수 단위) (a) (b) (c)',
     '도박 (걸 포인트)',
-    '핑'
+    '핑',
+    '송금 (멤버 멘션) (송금할 포인트)'
 ]
 
 func_explain = [
@@ -78,7 +80,8 @@ func_explain = [
     '사칙연산 수행(+, -, *, /)',
     '일차방정식의 해 구하기 (ax+b=c)',
     '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배)',
-    '핑을 측정'
+    '핑을 측정',
+    '돈을 송금함'
 ]
 
 embedcolor = 0x00ffff
@@ -105,7 +108,7 @@ def readpoint(id):
     except FileNotFoundError:
         a = open(pointroute, 'w')
         a.write('0')
-        b = '0'
+        b = 0
     a.close()
     b = int(b)
     return b
@@ -113,7 +116,7 @@ def readpoint(id):
 def writepoint(id, addpoint):
     pointroute = f'{id}.txt'
     a = open(pointroute, 'w')
-    a.write(addpoint)
+    a.write(str(addpoint))
     a.close()
 
 #이벤트 처리
@@ -371,6 +374,23 @@ async def _dobac(ctx, don):
                 msgembed = Embed(title='에이이이이이', description='졌습니다......', color=errorcolor)
             msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
             await ctx.send(embed=msgembed)
+
+@app.command(name='송금')
+async def _sendmoney(ctx, member: Member, money):
+    if isbanned(ctx.author.id):
+        await ctx.send('명령어 사용 불가')
+    else:
+        point = readpoint(ctx.author.id)
+        if point < int(money):
+            await ctx.send('돈이 부족합니다....')
+        else:
+            writepoint(ctx.author.id, point-int(money))
+            point = readpoint(member.id)
+            writepoint(member.id, point+int(money))
+            msgembed = Embed(title='송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
+            msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
+            await ctx.send(embed=msgembed)
+
 
 #에러 처리
 
