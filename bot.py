@@ -100,11 +100,14 @@ def is_owner():
 def readpoint(id):
     pointroute = f'{id}.txt'
     try:
-        a = open(pointroute, 'r').read()
+        a = open(pointroute, 'r')
+        b = a.read()
     except FileNotFoundError:
-        a = open(pointroute, 'w').close()
-        a = 0
-    return a
+        a = open(pointroute, 'w')
+        a.write('0')
+        b = '0'
+    a.close()
+    return int(b)
 
 def writepoint(id, addpoint):
     pointroute = f'{id}.txt'
@@ -114,7 +117,7 @@ def writepoint(id, addpoint):
         a = open(pointroute, 'w').write('0').close()
         a = '0'
     b = open(pointroute, 'w')
-    b.write(str(int(a)+int(addpoint))).close()
+    b.write(str(addpoint)).close()
 
 #이벤트 처리
 
@@ -146,25 +149,13 @@ async def _chulseok(ctx):
         try:
             b = open(ifyouchulseoked, 'r')
         except FileNotFoundError:
-            b = open(ifyouchulseoked, 'w')
-            b.write('1')
-            b.close()
+            b = open(ifyouchulseoked, 'w').close()
             check = True
-            pointroute = f'{ctx.author.id}.txt'
-            try:
-                a = open(pointroute, 'r')
-            except FileNotFoundError:
-                a = open(pointroute, 'w')
-                a.write('0')
-            a.close()
-            a = open(pointroute, 'r')
-            point = int(a.read())
-            a.close()
-            a = open(pointroute, 'w')
-            a.write(str(point+1))
-            a.close()
+        if check:
+            point = readpoint(ctx.author.id)
+            writepoint(ctx.author.id, 1)
             await ctx.send('정상적으로 출석되었습니다')
-        if not check:
+        else:
             await ctx.send('이미 출석하셨습니다 내일 다시 오세요')
 
 @app.command(name='소개설정')
@@ -196,10 +187,10 @@ async def _info(ctx):
             userinfo = a.read()
             a.close()
         pointroute = f'{ctx.author.id}.txt'
-        msgembed = Embed(title=str(ctx.author), description=userinfo, color=0x00ffff)
+        msgembed = Embed(title=str(ctx.author), description=userinfo, color=embedcolor)
         msgembed.set_thumbnail(url=str(ctx.author.avatar_url))
         msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
-        point = readpoint(f'{ctx.author.id}')
+        point = readpoint(ctx.author.id)
         msgembed.add_field(name='유저 포인트', value=point)
         msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
         await ctx.send(embed=msgembed)
@@ -295,7 +286,7 @@ async def _help(ctx, what_you_look_for):
         
         else:
             msgembed = Embed(title='에러', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
-            msgembed.set_footer(text=f'{prefix}도움 커맨드 써보라고 | {ctx.author}')
+            msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
         await ctx.send(embed=msgembed)
 
 @app.command(name='핑')
@@ -366,11 +357,29 @@ async def _ban(ctx, member: Member):
 
 #포인트 카테고리
 
-'''@app.command(name='도박')
+@app.command(name='도박')
 async def _dobac(ctx, don):
     if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
-    else:'''
+    else:
+        point = readpoint(ctx.author.id)
+        if int(don) > point:
+            await ctx.send('**돈이 부족합니다**')
+        elif float(int(don)) != float(don) or float(don) <= 0:     #정수인가
+            await ctx.send('**도박은 자연수만 받습니다**')
+        else:
+            winorlose = randint(0, 1)
+            if winorlose == 1:      #이김
+                writepoint(ctx.author.id, point+int(don))
+                msgembed = Embed(title='와아아아아아', description='이겼습니다!!!!!', color=embedcolor)
+            else:
+                if point-int(don) < 0:
+                    writepoint(ctx.author.id, 0)
+                else:
+                    writepoint(ctx.author.id, point-int(don))
+                    msgembed = Embed(title='에이이이이이', description='졌습니다......', color=errorcolor)
+            msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
+            await ctx.send(embed=msgembed)
 
 #에러 처리
 
@@ -383,6 +392,7 @@ async def _help_error(ctx, error):
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
+        msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
         await ctx.send(embed=msgembed)
 
 app.remove_command("help")
