@@ -8,6 +8,7 @@ from time import sleep
 from random import randint
 import asyncio
 from discord.ext import commands
+from os.path import isdir
 import time
 import os
 from os.path import isfile
@@ -31,7 +32,7 @@ category_list = [
 category_explain = [
     '`도움`, `봇정보`, `핑`',
     '`정보`, `출석`, `소개설정`, `파일생성`',
-    '`밴`, `언밴`',
+    '`밴`, `언밴`, `관리자송금`',
     '`사칙연산`, `일차풀기`',
     '`도박`, `송금`'
 ]
@@ -49,7 +50,8 @@ func_list = [
     '일차풀기',
     '도박',
     '핑',
-    '송금'
+    '송금',
+    '관리자송금'
 ]
 
 func_footer = [
@@ -63,9 +65,10 @@ func_footer = [
     '파일생성 (제목) (내용)',
     '사칙연산 (수) (연산자) (수)',
     '일차풀기 (미지수 단위) (a) (b) (c)',
-    '도박 (걸 포인트)',
+    '도박 (걸 포인트 / 올인)',
     '핑',
-    '송금 (멤버 멘션) (송금할 포인트)'
+    '송금 (멤버 멘션) (송금할 포인트)',
+    '관리자송금 (멤버 멘션) (송금할 포인트)'
 ]
 
 func_explain = [
@@ -81,7 +84,8 @@ func_explain = [
     '일차방정식의 해 구하기 (ax+b=c)',
     '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배)',
     '핑을 측정',
-    '돈을 송금함'
+    '돈을 송금함',
+    '돈 송금 - 관리자용'
 ]
 
 embedcolor = 0x00ffff
@@ -143,13 +147,19 @@ async def _chulseok(ctx):
     else:
         date = time.strftime('%Y%m%d', time.localtime(time.time()))
         ifyouchulseoked = f'{date}/{ctx.author.id}.txt'
-        if not os.path.isdir(f'{date}/'):
+        b = True
+        if not isdir(f'{date}/'):
             os.makedirs(f'{date}/')
-        if not os.path.isfile(f'{date}/{ctx.author.id}.txt'):
+        try:
+            a = open(ifyouchulseoked, 'r')
+        except FileNotFoundError:
+            b = False
+            a = open(ifyouchulseoked, 'w')
             point = readpoint(ctx.author.id)
             writepoint(ctx.author.id, 1+point)
             await ctx.send('정상적으로 출석되었습니다')
-        else:
+        a.close()
+        if b:
             await ctx.send('이미 출석하셨습니다 내일 다시 오세요')
 
 @app.command(name='소개설정')
@@ -295,73 +305,82 @@ async def _ping(ctx):
 
 @app.command(name='밴')
 async def _ban(ctx, member: Member):
-    if isbanned(ctx.author.id):
+    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
         await ctx.send('명령어 사용 불가')
     else:
-        if ctx.author.id == 745848200195473490:
-            if isbanned(member.id):
-                await ctx.send('이미 차단당했습니다')
-            else:
-                b = True
-                try:
-                    a = open('ban.txt', 'r')
-                except FileNotFoundError:
-                    a = open('ban.txt', 'w')
-                    a.write(str(member.id))
-                    b = False
-                a.close()
-                if b:
-                    a = open('ban.txt', 'r')
-                    banned_members = a.read()
-                    a.close()
-                    a = open('ban.txt', 'w')
-                    a.write(f'{banned_members}\n{member.id}')
-                    a.close()
-                    await ctx.send(f'{member.mention} 님은 ThinkingBot에게서 차단되었습니다. 이의는 ThinkingBot 관리자에게 제출해 주십시오.')
+        if isbanned(member.id):
+            await ctx.send('이미 차단당했습니다')
         else:
-            await ctx.send('권한이 없습니다')
+            b = True
+            try:
+                a = open('ban.txt', 'r')
+            except FileNotFoundError:
+                a = open('ban.txt', 'w')
+                a.write(str(member.id))
+                b = False
+            a.close()
+            if b:
+                a = open('ban.txt', 'r')
+                banned_members = a.read()
+                a.close()
+                a = open('ban.txt', 'w')
+                a.write(f'{banned_members}\n{member.id}')
+                a.close()
+                await ctx.send(f'{member.mention} 님은 ThinkingBot에게서 차단되었습니다. 이의는 ThinkingBot 관리자에게 제출해 주십시오.')
 
 @app.command(name='언밴')
 async def _ban(ctx, member: Member):
-    if isbanned(ctx.author.id):
+    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
         await ctx.send('명령어 사용 불가')
     else:
-        if ctx.author.id == 745848200195473490:
-            if isbanned(member.id):
-                b = True
-                try:
-                    a = open('ban.txt', 'r')
-                except FileNotFoundError:
-                    a = open('ban.txt', 'w')
-                    a.write('')
-                    b = False
+        if isbanned(member.id):
+            b = True
+            try:
+                a = open('ban.txt', 'r')
+            except FileNotFoundError:
+                a = open('ban.txt', 'w')
+                a.write('')
+                b = False
+            a.close()
+            if b:
+                a = open('ban.txt', 'r')
+                banned_members = a.read().replace(f'\n{member.id}', '')
                 a.close()
-                if b:
-                    a = open('ban.txt', 'r')
-                    banned_members = a.read().replace(f'\n{member.id}', '')
-                    a.close()
-                    a = open('ban.txt', 'w')
-                    a.write(banned_members)
-                    a.close()
-                    await ctx.send(f'{member.mention} 님은 ThinkingBot에게서 차단이 풀렸습니다.')
-            else:
-                await ctx.send('차단당한적이 없습니다')
+                a = open('ban.txt', 'w')
+                a.write(banned_members)
+                a.close()
+                await ctx.send(f'{member.mention} 님은 ThinkingBot에게서 차단이 풀렸습니다.')
         else:
-            await ctx.send('권한이 없습니다')
+            await ctx.send('차단당한적이 없습니다')
+
+@app.command(name='관리자송금')
+async def _sendmoney(ctx, member: Member, money):
+    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
+        await ctx.send('명령어 사용 불가')
+    else:
+        point = readpoint(member.id)
+        writepoint(member.id, point+int(money))
+        msgembed = Embed(title='관리자송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
+        msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
+        await ctx.send(embed=msgembed)
 
 #포인트 카테고리
 
 @app.command(name='도박')
-async def _dobac(ctx, don):
+async def _dobac(ctx, don1):
     if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         point = readpoint(ctx.author.id)
         if int(don) > point:
             await ctx.send('**돈이 부족합니다**')
-        elif (float(int(don)) != float(don)) or (float(don) <= 0):
+        elif (float(int(don1)) != float(don1)) or (float(don1) <= 0):
             await ctx.send('**도박은 자연수만 받습니다**')
         else:
+            if don1 == '올인':
+                don = readpoint(ctx.author.id)
+            else:
+                don = int(don1)
             winorlose = randint(0, 1)
             if winorlose == 1:
                 writepoint(ctx.author.id, str(point+int(don)))
