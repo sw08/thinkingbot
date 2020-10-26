@@ -4,7 +4,6 @@
 #모듈 임포트
 
 from discord import *
-from time import sleep
 from random import randint
 import asyncio
 from discord.ext import commands
@@ -12,6 +11,7 @@ from os.path import isdir
 import time
 import os
 from os.path import isfile
+import ast
 
 #기본 변수 설정
 
@@ -32,7 +32,7 @@ category_list = [
 category_explain = [
     '`도움`, `봇정보`, `핑`',
     '`정보`, `출석`, `소개설정`, `파일생성`',
-    '`밴`, `언밴`, `관리자송금`',
+    '`밴`, `언밴`, `관리자송금`, `공지`',
     '`사칙연산`, `일차풀기`',
     '`도박`, `송금`'
 ]
@@ -51,7 +51,8 @@ func_list = [
     '도박',
     '핑',
     '송금',
-    '관리자송금'
+    '관리자송금',
+    '공지'
 ]
 
 func_footer = [
@@ -68,7 +69,8 @@ func_footer = [
     '도박 (걸 포인트 / 올인)',
     '핑',
     '송금 (멤버 멘션) (송금할 포인트)',
-    '관리자송금 (멤버 멘션) (송금할 포인트)'
+    '관리자송금 (멤버 멘션) (송금할 포인트)',
+    '공지 (내용)'
 ]
 
 func_explain = [
@@ -85,7 +87,8 @@ func_explain = [
     '50% 확률로 2배의 돈을 얻음 (아니면 건돈×-2배)',
     '핑을 측정',
     '돈을 송금함',
-    '돈 송금 - 관리자용'
+    '돈 송금 - 관리자용',
+    '공지하기'
 ]
 
 embedcolor = 0x00ffff
@@ -122,6 +125,7 @@ def writepoint(id, addpoint):
     a = open(pointroute, 'w')
     a.write(str(addpoint))
     a.close()
+
 
 #이벤트 처리
 
@@ -264,9 +268,9 @@ async def _botinfo(ctx):
     else:
         msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
         msgembed.add_field(name='개발자', value='yswysw#9328')
-        msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 등 많은 분들께 감사드립니다.', inline=False)
+        msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 , `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
         msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-        msgembed.add_field(name='버전', value='Beta 0.5.1 - 20201025 릴리즈', inline=False)
+        msgembed.add_field(name='버전', value='Beta 0.5.2 - 20201025 릴리즈', inline=False)
         msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
         msgembed.add_field(name='개발환경', value='윈도우10, Visual Studio Code', inline=False)
         msgembed.add_field(name='공식 서포트 서버', value='https://discord.gg/ASvgRjX', inline=False)
@@ -363,6 +367,39 @@ async def _sendmoney(ctx, member: Member, money):
         msgembed = Embed(title='관리자송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
         msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
         await ctx.send(embed=msgembed)
+'''
+@bot.command(name='공지')
+async def _공지(ctx, *, msg):
+    msgembed = Embed(title='봇공지', description=msg, color=embedcolor)
+    for i in notice:
+        await i.send(embed=msgembed)        
+'''
+@app.command(name = 'eval')
+async def eval_fn(self, ctx, *, cmd):
+    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
+        await ctx.send('명령어 사용 불가')
+    else:
+        try:
+            fn_name = "_eval_expr"
+            cmd = cmd.strip("` ")
+            cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
+            body = f"async def {fn_name}():\n{cmd}"
+            parsed = ast.parse(body)
+            body = parsed.body[0].body
+            insert_returns(body)
+            env = {
+                'bot': app.bot,
+                'discord': discord,
+                'commands': commands,
+                'ctx': ctx,
+                '__import__': __import__
+                }
+            exec(compile(parsed, filename="<ast>", mode="exec"), env)
+
+            result = (await eval(f"{fn_name}()", env))
+            await ctx.send(result)
+        except Exception as a:
+            await ctx.send(a)
 
 #포인트 카테고리
 
@@ -409,7 +446,6 @@ async def _sendmoney(ctx, member: Member, money):
             msgembed = Embed(title='송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
             msgembed.set_footer(text=f'{prefix}도움 | {ctx.author}')
             await ctx.send(embed=msgembed)
-
 
 #에러 처리
 
