@@ -19,7 +19,7 @@ prefix ="''"
 
 app = commands.Bot(command_prefix=prefix)
 
-token = 'NzY1NDM0MDU1MDE2ODQxMjU4.X4UwAw.Q3L-hir9EVtpjHVrBzDUzTSLxPc'
+token = 'NzUwNTU3MjQ3ODQyNTQ5ODcx.X08Q6A.8yh-hH1jXp9xV8aFjz3ieOG00zA'
 
 category_list = [
     '지원',
