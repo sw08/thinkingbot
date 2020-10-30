@@ -126,7 +126,6 @@ def writepoint(id, addpoint):
     a.write(str(addpoint))
     a.close()
 
-
 #이벤트 처리
 
 @app.event
@@ -367,39 +366,57 @@ async def _sendmoney(ctx, member: Member, money):
         msgembed = Embed(title='관리자송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
-'''
-@bot.command(name='공지')
+
+@app.command(name='공지')
 async def _공지(ctx, *, msg):
-    msgembed = Embed(title='봇공지', description=msg, color=embedcolor)
-    for i in notice:
-        await i.send(embed=msgembed)        
-'''
-@app.command(name = 'eval')
-async def eval_fn(self, ctx, *, cmd):
-    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
+    if isbanned(ctx.author.id) or (ctx.author.id != 745848200195473490):
         await ctx.send('명령어 사용 불가')
     else:
+        a = True
+        msgembed = Embed(title='봇공지', description=msg, color=embedcolor)
+        msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
         try:
-            fn_name = "_eval_expr"
-            cmd = cmd.strip("` ")
-            cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
-            body = f"async def {fn_name}():\n{cmd}"
-            parsed = ast.parse(body)
-            body = parsed.body[0].body
-            insert_returns(body)
-            env = {
-                'bot': app.bot,
-                'discord': discord,
-                'commands': commands,
-                'ctx': ctx,
-                '__import__': __import__
-                }
-            exec(compile(parsed, filename="<ast>", mode="exec"), env)
+            b = open('notice.txt', 'r')
+        except FileNotFoundError:
+            b = open('notice.txt', 'w').close()
+            a = False
+            await ctx.send('공지채널없음')
+        if a:
+            c = b.read().split('\n')
+            for i in range(len(c)):
+                await app.get_channel(int(c[i])).send(embed=msgembed)
+        b.close()
 
-            result = (await eval(f"{fn_name}()", env))
-            await ctx.send(result)
-        except Exception as a:
-            await ctx.send(a)
+@app.command('공지설정')
+async def _공지설정(ctx):
+    if isbanned(ctx.author.id) or (ctx.author.id != 745848200195473490):
+        await ctx.send('명령어 사용 불가')
+    else:
+        d = False
+        b = True
+        try:
+            a = open('notice.txt', 'r')
+        except FileNotFoundError:
+            a = open('notice.txt', 'w')
+            a.write(f'{ctx.channel.id}')
+            b = False
+            a.close()
+            d = True
+        if b:
+            a = open('notice.txt', 'r')
+            if str(ctx.channel.id) in a.read():
+                await ctx.send('이미 등록됨')
+            else:
+                c = a.read()
+                a.close()
+                a = open('notice.txt', 'w')
+                a.write(f'{c}\n{ctx.channel.id}')
+                a.close()
+                d = True
+        if d:
+            msgembed = Embed(title='공지설정', description='완료', color=embedcolor)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=msgembed)
 
 #포인트 카테고리
 
