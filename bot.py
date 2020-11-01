@@ -225,7 +225,7 @@ async def _devote_tof(ctx, *, content):
         msgembed = Embed(title='투표', description=content, color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
         a = await ctx.send(embed=msgembed)
-        await a.add_reaction('❎')
+        await a.add_reaction('❌')
         await a.add_reaction('✅')
 
 #수학 카테고리
@@ -397,6 +397,8 @@ async def _공지(ctx, *, msg):
             await ctx.send('공지채널없음')
         if a:
             c = b.read().split('\n')
+            print(c)
+            c.remove('')
             for i in range(len(c)):
                 await app.get_channel(int(c[i])).send(embed=msgembed)
         b.close()
@@ -406,28 +408,21 @@ async def _공지설정(ctx):
     if isbanned(ctx.author.id) or (ctx.author.id != 745848200195473490):
         await ctx.send('명령어 사용 불가')
     else:
-        d = False
-        b = True
+        DeungLock = True
         try:
             a = open('notice.txt', 'r')
+            b = a.read()
         except FileNotFoundError:
             a = open('notice.txt', 'w')
-            a.write(f'{ctx.channel.id}')
-            b = False
+            b = ''
+        a.close()
+        os.remove('notice.txt')
+        if str(ctx.channel.id) in b:
+            await ctx.send('이미 등록됨')
+        else:
+            a = open('notice.txt')
+            a.write(b + f'\n{ctx.channel.id}')
             a.close()
-            d = True
-        if b:
-            a = open('notice.txt', 'r')
-            if str(ctx.channel.id) in a.read():
-                await ctx.send('이미 등록됨')
-            else:
-                c = a.read()
-                a.close()
-                a = open('notice.txt', 'w')
-                a.write(f'{c}\n{ctx.channel.id}')
-                a.close()
-                d = True
-        if d:
             msgembed = Embed(title='공지설정', description='완료', color=embedcolor)
             msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
             await ctx.send(embed=msgembed)
