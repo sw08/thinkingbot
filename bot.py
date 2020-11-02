@@ -8,13 +8,12 @@ from os.path import isdir
 import time
 import os
 from os.path import isfile
-import ast
 
 #기본 변수 설정
 
 prefix ="''"
 
-app = commands.Bot(command_prefix=prefix)
+app = commands.Bot(command_prefix=["''", '"'])
 
 token = 'NzUwNTU3MjQ3ODQyNTQ5ODcx.X08Q6A.8yh-hH1jXp9xV8aFjz3ieOG00zA'
 
