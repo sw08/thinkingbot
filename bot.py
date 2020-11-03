@@ -13,9 +13,11 @@ from os.path import isfile
 
 prefix ="''"
 
-app = commands.Bot(command_prefix=["''", '"'])
+app = commands.Bot(command_prefix=["''", '"'], intents=Intents.all())
 
-token = 'NzUwNTU3MjQ3ODQyNTQ5ODcx.X08Q6A.8yh-hH1jXp9xV8aFjz3ieOG00zA'
+a = open('token.txt', 'r')
+token = a.read()
+a.close()
 
 category_list = [
     '지원',
