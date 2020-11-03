@@ -15,7 +15,9 @@ prefix ="''"
 
 app = commands.Bot(command_prefix=["''", '"'])
 
-token = 'NzUwNTU3MjQ3ODQyNTQ5ODcx.X08Q6A.8yh-hH1jXp9xV8aFjz3ieOG00zA'
+a = open('token.txt', 'r')
+token = a.read()
+a.close()
 
 category_list = [
     '지원',
@@ -99,7 +101,7 @@ errorcolor = 0xff0000
 #함수 처리
 
 def isnotowner(id):
-    return not id in [745848200195473490, 557119176590884864]
+    return not id in [745848200195473490, 557119176590884864, 594183416266752000]
 
 def isbanned(id):
     if isfile('ban.txt'):
