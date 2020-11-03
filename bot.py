@@ -8,7 +8,6 @@ from os.path import isdir
 import time
 import os
 from os.path import isfile
-import ast
 
 #기본 변수 설정
 
@@ -98,6 +97,9 @@ embedcolor = 0x00ffff
 errorcolor = 0xff0000
 
 #함수 처리
+
+def isnotowner(id):
+    return not id in [745848200195473490, 557119176590884864]
 
 def isbanned(id):
     if isfile('ban.txt'):
@@ -202,7 +204,7 @@ async def _info(ctx):
         msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
         point = readpoint(ctx.author.id)
         msgembed.add_field(name='유저 포인트', value=point)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 @app.command(name='파일생성')
@@ -223,7 +225,7 @@ async def _devote_tof(ctx, *, content):
         await ctx.send('명령어 사용 불가')
     else:
         msgembed = Embed(title='투표', description=content, color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         a = await ctx.send(embed=msgembed)
         await a.add_reaction('❌')
         await a.add_reaction('✅')
@@ -251,7 +253,7 @@ async def _calcul(ctx, n1, operator, n2):
         if float(int(a)) == a:
             a = int(a)
         msgembed.add_field(name='**Output**', value=f'```{a}```', inline='True')
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         if b:
             await ctx.send(embed=msgembed)
 
@@ -269,7 +271,7 @@ async def _calcul(ctx, operator, a, b, c):
         if float(int(answer)) == answer:
             answer = int(answer)
         msgembed.add_field(name='**Output**', value=f'```{answer}```', inline=False)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 #지원 카테고리
@@ -289,7 +291,7 @@ async def _botinfo(ctx):
         msgembed.add_field(name='공식 서포트 서버', value='https://discord.gg/ASvgRjX', inline=False)
         msgembed.add_field(name='봇 초대 링크', value='https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot', inline=False)
         msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 @app.command(name='도움')
@@ -307,7 +309,7 @@ async def _help(ctx, what_you_look_for):
         
         else:
             msgembed = Embed(title='에러', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
-            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 @app.command(name='핑')
@@ -322,7 +324,7 @@ async def _ping(ctx):
 
 @app.command(name='밴')
 async def _ban(ctx, member: Member):
-    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
+    if isbanned(ctx.author.id) or isnotowner(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         if isbanned(member.id):
@@ -347,7 +349,7 @@ async def _ban(ctx, member: Member):
 
 @app.command(name='언밴')
 async def _ban(ctx, member: Member):
-    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
+    if isbanned(ctx.author.id) or isnotowner(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         if isbanned(member.id):
@@ -372,18 +374,18 @@ async def _ban(ctx, member: Member):
 
 @app.command(name='관리자송금')
 async def _sendmoney(ctx, member: Member, money):
-    if isbanned(ctx.author.id) or ctx.author.id != 745848200195473490:
+    if isbanned(ctx.author.id) or isnotowner(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         point = readpoint(member.id)
         writepoint(member.id, point+int(money))
         msgembed = Embed(title='관리자송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 @app.command(name='공지')
 async def _공지(ctx, *, msg):
-    if isbanned(ctx.author.id) or (ctx.author.id != 745848200195473490):
+    if isbanned(ctx.author.id) or (isnotowner(ctx.author.id)):
         await ctx.send('명령어 사용 불가')
     else:
         a = True
@@ -405,7 +407,7 @@ async def _공지(ctx, *, msg):
 
 @app.command('공지설정')
 async def _공지설정(ctx):
-    if isbanned(ctx.author.id) or (ctx.author.id != 745848200195473490):
+    if isbanned(ctx.author.id) or (isnotowner(ctx.author.id)):
         await ctx.send('명령어 사용 불가')
     else:
         DeungLock = True
@@ -424,7 +426,7 @@ async def _공지설정(ctx):
             a.write(b + f'\n{ctx.channel.id}')
             a.close()
             msgembed = Embed(title='공지설정', description='완료', color=embedcolor)
-            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
             await ctx.send(embed=msgembed)
 
 #포인트 카테고리
@@ -454,7 +456,7 @@ async def _dobac(ctx, don1):
                 else:
                     writepoint(ctx.author.id, str(point-int(don)))
                 msgembed = Embed(title='에이이이이이', description='졌습니다......', color=errorcolor)
-            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
             await ctx.send(embed=msgembed)
 
 @app.command(name='송금')
@@ -470,7 +472,7 @@ async def _sendmoney(ctx, member: Member, money):
             point = readpoint(member.id)
             writepoint(member.id, point+int(money))
             msgembed = Embed(title='송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
-            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
             await ctx.send(embed=msgembed)
 
 #에러 처리
@@ -484,7 +486,7 @@ async def _help_error(ctx, error):
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 | 접두사는 작은따옴표 2개입니다', icon_url=ctx.author.avatar_url)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 app.remove_command("help")
