@@ -72,7 +72,8 @@ func_footer = [
     '관리자송금 (멤버 멘션) (송금할 포인트)',
     '공지 (내용)'
     '찬반투표 (내용)',
-    '공지설정'
+    '공지설정',
+    '도박 (포인트/올인)'
 ]
 
 func_explain = [
@@ -92,7 +93,8 @@ func_explain = [
     '돈 송금 - 관리자용',
     '공지하기',
     '찬성/반대 투표 생성',
-    '공지설정'
+    '공지설정',
+    '도박'
 ]
 
 embedcolor = 0x00ffff
@@ -300,11 +302,11 @@ async def _help(ctx, what_you_look_for):
     else:
         if what_you_look_for in func_list:
             msgembed = Embed(title=f'도움 - {what_you_look_for}', description=func_explain[func_list.index(what_you_look_for)], color=embedcolor)
-            msgembed.set_footer(text=f'{prefix}{func_footer[func_list.index(what_you_look_for)]} | {ctx.author}')
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}{func_footer[func_list.index(what_you_look_for)]}', icon_url=ctx.author.avatar_url)
 
         elif what_you_look_for in category_list:
             msgembed = Embed(title=f'도움 - {what_you_look_for}', description=category_explain[category_list.index(what_you_look_for)], color=embedcolor)
-            msgembed.set_footer(text=f'{prefix}도움 {what_you_look_for} | {ctx.author}')
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 {what_you_look_for}', icon_url=ctx.author.avatar_url)
         
         else:
             msgembed = Embed(title='에러', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
