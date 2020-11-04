@@ -436,27 +436,27 @@ async def _dobac(ctx, don1):
         await ctx.send('명령어 사용 불가')
     else:
         point = readpoint(ctx.author.id)
-        if float(don1) > point:
+        if don1 == '올인':
+            don = point
+        else:
+            don = don1
+        if float(don) > point:
             msgembed = Embed(title='에러', description='돈이 부족합니다', color=errorcolor)
-        elif float(don1) <= 0:
+        elif float(don) <= 0:
             msgembed = Embed(title='에러', description='돈은 1 이상부터 걸 수 있습니다', color=errorcolor)
         else:
-            if don1 == '올인':
-                don = point
-            else:
-                don = don1
             if randint(0,1):
                 writepoint(ctx.author.id, point+int(don))
                 msgembed = Embed(title='와아아', description='이겼습니다!', color=embedcolor)
-                msgembed.add_field(name='원래 있던 돈', value=str(point))
-                msgembed.add_field(name='번 돈', value=don)
-                msgembed.add_field(name='현재 가진 돈', value=str(point+int(don)))
+                msgembed.add_field(name='원래 있던 돈', value=str(point), inline=False)
+                msgembed.add_field(name='번 돈', value=don, inline=False)
+                msgembed.add_field(name='현재 가진 돈', value=str(point+int(don)), inline=False)
             else:
                 writepoint(ctx.author.id, point-int(don))
                 msgembed = Embed(title='으아악', description='졌습니다...', color=errorcolor)
-                msgembed.add_field(name='원래 있던 돈', value=str(point))
-                msgembed.add_field(name='번 돈', value=don)
-                msgembed.add_field(name='현재 가진 돈', value=str(point-int(don)))
+                msgembed.add_field(name='원래 있던 돈', value=str(point), inline=False)
+                msgembed.add_field(name='번 돈', value=don, inline=False)
+                msgembed.add_field(name='현재 가진 돈', value=str(point-int(don)), inline=False)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
