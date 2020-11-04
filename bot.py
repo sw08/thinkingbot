@@ -431,16 +431,20 @@ async def _공지설정(ctx):
 #포인트 카테고리
 
 @app.command(name='도박')
-async def _dobac(ctx, don):
+async def _dobac(ctx, don1):
     if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         point = readpoint(ctx.author.id)
-        if float(don) > point:
+        if float(don1) > point:
             msgembed = Embed(title='에러', description='돈이 부족합니다', color=errorcolor)
-        elif float(don) <= 0:
+        elif float(don1) <= 0:
             msgembed = Embed(title='에러', description='돈은 1 이상부터 걸 수 있습니다', color=errorcolor)
         else:
+            if don1 == '올인':
+                don = point
+            else:
+                don = don1
             if randint(0,1):
                 writepoint(ctx.author.id, point+int(don))
                 msgembed = Embed(title='와아아', description='이겼습니다!', color=embedcolor)
