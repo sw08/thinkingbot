@@ -109,11 +109,6 @@ def isbanned(id):
     open('ban.txt', 'x')
     return False
 
-def is_owner():
-    async def predicate(ctx):
-        return ctx.author.id == 745848200195473490
-    return commands.check(predicate)
-
 def readpoint(id):
     pointroute = f'{id}.txt'
     try:
@@ -436,32 +431,30 @@ async def _공지설정(ctx):
 #포인트 카테고리
 
 @app.command(name='도박')
-async def _dobac(ctx, don1):
+async def _dobac(ctx, don):
     if isbanned(ctx.author.id):
         await ctx.send('명령어 사용 불가')
     else:
         point = readpoint(ctx.author.id)
-        if int(don) > point:
-            await ctx.send('**돈이 부족합니다**')
-        elif (float(int(don1)) != float(don1)) or (float(don1) <= 0):
-            await ctx.send('**도박은 자연수만 받습니다**')
+        if float(don) > point:
+            msgembed = Embed(title='에러', description='돈이 부족합니다', color=errorcolor)
+        elif float(don) <= 0:
+            msgembed = Embed(title='에러', description='돈은 1 이상부터 걸 수 있습니다', color=errorcolor)
         else:
-            if don1 == '올인':
-                don = readpoint(ctx.author.id)
+            if randint(0,1):
+                writepoint(ctx.author.id, point+int(don))
+                msgembed = Embed(title='와아아', description='이겼습니다!', color=embedcolor)
+                msgembed.add_field(name='원래 있던 돈', value=str(point))
+                msgembed.add_field(name='번 돈', value=don)
+                msgembed.add_field(name='현재 가진 돈', value=str(point+int(don)))
             else:
-                don = int(don1)
-            winorlose = randint(0, 1)
-            if winorlose == 1:
-                writepoint(ctx.author.id, str(point+int(don)))
-                msgembed = Embed(title='와아아아아아', description='이겼습니다!!!!!', color=embedcolor)
-            else:
-                if point-int(don) < 0:
-                    writepoint(ctx.author.id, '0')
-                else:
-                    writepoint(ctx.author.id, str(point-int(don)))
-                msgembed = Embed(title='에이이이이이', description='졌습니다......', color=errorcolor)
-            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=msgembed)
+                writepoint(ctx.author.id, point-int(don))
+                msgembed = Embed(title='으아악', description='졌습니다...', color=errorcolor)
+                msgembed.add_field(name='원래 있던 돈', value=str(point))
+                msgembed.add_field(name='번 돈', value=don)
+                msgembed.add_field(name='현재 가진 돈', value=str(point-int(don)))
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
 
 @app.command(name='송금')
 async def _sendmoney(ctx, member: Member, money):
@@ -485,8 +478,9 @@ async def _sendmoney(ctx, member: Member, money):
 async def _help_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         msgembed = Embed(title='도움', description='도움말', color=embedcolor)
+        msgembed.set_thumbnail(url='https://thinkingbot.kro.kr/profile.png')
         msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
-        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`')
+        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`', inline=False)
         msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
