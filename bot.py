@@ -8,7 +8,9 @@ from os.path import isdir
 import time
 import os
 from os.path import isfile
+import datetime
 from pytz import timezone
+from datetime import timedelta
 
 #기본 변수 설정
 
@@ -160,7 +162,10 @@ async def on_command_error(ctx, error):
 @app.command(name='출석')
 @can_use()
 async def _chulseok(ctx):
-    date = str(kst_updated_time.astimezone().strftime('%Y-%m-%d'))
+    utcnow= datetime.datetime.utcnow()
+    time_gap= datetime.timedelta(hours=9)
+    kor_time= utcnow+ time_gap
+    date = str(kor_time.strftime('%Y%m%d'))
     ifyouchulseoked = f'{date}/{ctx.author.id}.txt'
     b = True
     if not isdir(f'{date}/'):
@@ -172,10 +177,11 @@ async def _chulseok(ctx):
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id)
         writepoint(ctx.author.id, 1+point)
+        point += 1
         msgembed = Embed(title='출석 완료', description=f'출석이 완료되었습니다. \n 현재 포인트: {point}', color=embedcolor)
     a.close()
     if b:
-        msgembed = Embed(title='에러', description='이미 출석했습니다', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='이미 출석했습니다', color=errorcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -210,7 +216,7 @@ async def _info(ctx):
     msgembed.set_thumbnail(url=str(ctx.author.avatar_url))
     msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
     point = readpoint(ctx.author.id)
-    msgembed.add_field(name='유저 포인트', value=point)
+    msgembed.add_field(name='💵유저 포인트💵', value=point)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -305,7 +311,7 @@ async def _help(ctx, what_you_look_for):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 {what_you_look_for}', icon_url=ctx.author.avatar_url)
     
     else:
-        msgembed = Embed(title='에러', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -313,7 +319,7 @@ async def _help(ctx, what_you_look_for):
 @can_use()
 async def _ping(ctx):
     la = app.latency
-    embed = msgembed(title='핑', description=f'{str(round(la * 1000))}ms', color=embedcolor)
+    msgembed = Embed(title='핑', description=f'{str(round(la * 1000))}ms', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -381,9 +387,12 @@ async def _sendmoney(ctx, member: Member, money):
 @can_use()
 @is_owner()
 async def _공지(ctx, *, msg):
-    time1 = str(kst_updated_time.astimezone().strftime('%m/%d %H:%M'))
+    utcnow= datetime.datetime.utcnow()
+    time_gap= datetime.timedelta(hours=9)
+    kor_time= utcnow+ time_gap
+    time1 = kor_time.strftime('%Y/%m/%d %H:%M')
     a = True
-    msgembed = Embed(title='봇공지', description=msg, color=embedcolor)
+    msgembed = Embed(title='📢봇공지📢', description=msg, color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {time1}', icon_url=ctx.author.avatar_url)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     try:
@@ -411,13 +420,13 @@ async def _공지설정(ctx):
         b = ''
     a.close()
     if str(ctx.channel.id) in b:
-        msgembed = Embed(title='에러', description='이미 등록되어 있음', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='이미 등록되어 있음', color=errorcolor)
     else:
         os.remove('notice.txt')
         a = open('notice.txt', 'w')
         a.write(b + f'\n{ctx.channel.id}')
         a.close()
-        msgembed = Embed(title='공지설정', description='완료', color=embedcolor)
+        msgembed = Embed(title='🔔공지설정🔔', description='완료', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -433,13 +442,13 @@ async def _공지취소(ctx):
         b = ''
     a.close()
     if not str(ctx.channel.id) in b:
-        msgembed = Embed(title='에러', description='등록되어 있지 않음', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='등록되어 있지 않음', color=errorcolor)
     else:
         os.remove('notice.txt')
         a = open('notice.txt', 'w')
         a.write(b.replace(f'{ctx.channel.id}\n', ''))
         a.close()
-        msgembed = Embed(title='공지취소', description='완료', color=embedcolor)
+        msgembed = Embed(title='🔕공지취소🔕', description='완료', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -454,9 +463,9 @@ async def _dobac(ctx, don1):
     else:
         don = don1
     if float(don) > point:
-        msgembed = Embed(title='에러', description='돈이 부족합니다', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='돈이 부족합니다', color=errorcolor)
     elif float(don) <= 0:
-        msgembed = Embed(title='에러', description='돈은 1 이상부터 걸 수 있습니다', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='돈은 1 이상부터 걸 수 있습니다', color=errorcolor)
     else:
         if randint(0,1):
             writepoint(ctx.author.id, point+int(don))
