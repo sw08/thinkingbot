@@ -8,6 +8,7 @@ from os.path import isdir
 import time
 import os
 from os.path import isfile
+from pytz import timezone
 
 #기본 변수 설정
 
@@ -100,6 +101,8 @@ func_explain = [
 embedcolor = 0x00ffff
 errorcolor = 0xff0000
 
+KST = timezone('Asia/Seoul')
+
 #함수 처리
 
 def is_owner():
@@ -157,7 +160,7 @@ async def on_command_error(ctx, error):
 @app.command(name='출석')
 @can_use()
 async def _chulseok(ctx):
-    date = time.strftime('%Y%m%d', time.localtime(time.time()))
+    date = str(kst_updated_time.astimezone().strftime('%Y-%m-%d'))
     ifyouchulseoked = f'{date}/{ctx.author.id}.txt'
     b = True
     if not isdir(f'{date}/'):
@@ -169,10 +172,12 @@ async def _chulseok(ctx):
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id)
         writepoint(ctx.author.id, 1+point)
-        await ctx.send('정상적으로 출석되었습니다')
+        msgembed = Embed(title='출석 완료', description=f'출석이 완료되었습니다. \n 현재 포인트: {point}', color=embedcolor)
     a.close()
     if b:
-        await ctx.send('이미 출석하셨습니다 내일 다시 오세요')
+        msgembed = Embed(title='에러', description='이미 출석했습니다', color=errorcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
 
 @app.command(name='소개설정')
 @can_use()
@@ -181,7 +186,9 @@ async def _setInfo(ctx, *, content):
     a = open(pointroute, 'w', encoding='utf-8')
     a.write(content)
     a.close()
-    await ctx.send(f'소개말이 {content} (으)로 변경되었습니다')
+    msgembed = Embed(title='변경 완료', description=f'소개말이 {content} (으)로 변경되었습니다', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(Embed=msgembed)
     
 @app.command(name='정보')
 @can_use()
@@ -306,7 +313,9 @@ async def _help(ctx, what_you_look_for):
 @can_use()
 async def _ping(ctx):
     la = app.latency
-    await ctx.send(f'Ping: {str(round(la * 1000))}ms')
+    embed = msgembed(title='핑', description=f'{str(round(la * 1000))}ms', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
 
 #관리자 카테고리
 
@@ -372,8 +381,10 @@ async def _sendmoney(ctx, member: Member, money):
 @can_use()
 @is_owner()
 async def _공지(ctx, *, msg):
+    time1 = str(kst_updated_time.astimezone().strftime('%m/%d %H:%M'))
     a = True
     msgembed = Embed(title='봇공지', description=msg, color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {time1}', icon_url=ctx.author.avatar_url)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     try:
         b = open('notice.txt', 'r')
@@ -392,7 +403,6 @@ async def _공지(ctx, *, msg):
 @app.command('공지설정')
 @can_use()
 async def _공지설정(ctx):
-    DeungLock = True
     try:
         a = open('notice.txt', 'r')
         b = a.read()
@@ -401,15 +411,37 @@ async def _공지설정(ctx):
         b = ''
     a.close()
     if str(ctx.channel.id) in b:
-        await ctx.send('이미 등록됨')
+        msgembed = Embed(title='에러', description='이미 등록되어 있음', color=errorcolor)
     else:
         os.remove('notice.txt')
         a = open('notice.txt', 'w')
         a.write(b + f'\n{ctx.channel.id}')
         a.close()
         msgembed = Embed(title='공지설정', description='완료', color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
+
+
+@app.command('공지취소')
+@can_use()
+async def _공지취소(ctx):
+    try:
+        a = open('notice.txt', 'r')
+        b = a.read()
+    except FileNotFoundError:
+        a = open('notice.txt', 'w')
+        b = ''
+    a.close()
+    if not str(ctx.channel.id) in b:
+        msgembed = Embed(title='에러', description='등록되어 있지 않음', color=errorcolor)
+    else:
+        os.remove('notice.txt')
+        a = open('notice.txt', 'w')
+        a.write(b.replace(f'{ctx.channel.id}\n', ''))
+        a.close()
+        msgembed = Embed(title='공지취소', description='완료', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
 
 #포인트 카테고리
 
