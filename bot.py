@@ -288,7 +288,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='yswysw#9328')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 , `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.1.3 - 20201104 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.2.3 - 20201106 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='깃허브', value='https://github.com/sw08/thinkingbot', inline=False)
     msgembed.add_field(name='공식 홈페이지', value='http://thinkingbot.kro.kr')
