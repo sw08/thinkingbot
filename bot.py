@@ -391,7 +391,7 @@ async def _공지(ctx, *, msg):
     time1 = kor_time.strftime('%Y/%m/%d %H:%M')
     a = True
     msgembed = Embed(title='📢봇공지📢', description='', color=embedcolor)
-    msgembed.add_field(name='ㅤ', value=msg, inline=False)
+    msgembed.add_field(name='ㅤ', value=f'{msg}\n\n-------------\n\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
     msgembed.set_footer(text=f'{ctx.author} | {time1}', icon_url=ctx.author.avatar_url)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     try:
