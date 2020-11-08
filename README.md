@@ -1,2 +1,2 @@
 # thinkingbot
-thinkingbot 개발 백업
+thinkingbot 개발

@@ -198,8 +198,9 @@ async def _setInfo(ctx, *, content):
     
 @app.command(name='정보')
 @can_use()
-async def _info(ctx):
-    pointroute = f'{ctx.author.id}_info.txt'
+async def _info(ctx, member : Member):
+    id = member.id
+    pointroute = f'{id}_info.txt'
     b = True
     try:
         a = open(pointroute, 'r')
@@ -211,13 +212,13 @@ async def _info(ctx):
         a = open(pointroute, 'r', encoding='utf-8')
         userinfo = a.read()
         a.close()
-    pointroute = f'{ctx.author.id}.txt'
-    msgembed = Embed(title=str(ctx.author), description=userinfo, color=embedcolor)
-    msgembed.set_thumbnail(url=str(ctx.author.avatar_url))
-    msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
-    point = readpoint(ctx.author.id)
+    pointroute = f'{id}.txt'
+    msgembed = Embed(title=str(member), description=userinfo, color=embedcolor)
+    msgembed.set_thumbnail(url=str(member.avatar_url))
+    msgembed.add_field(name='유저 ID', value=f'{id}')
+    point = readpoint(id)
     msgembed.add_field(name='💵유저 포인트💵', value=point)
-    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    msgembed.set_footer(text=f'{member} | {prefix}도움', icon_url=member.avatar_url)
     await ctx.send(embed=msgembed)
 
 @app.command(name='파일생성')
@@ -288,7 +289,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='yswysw#9328')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 , `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.2.3 - 20201106 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.2.4 - 20201108 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='개발환경', value='윈도우10, Visual Studio Code', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
@@ -389,7 +390,8 @@ async def _공지(ctx, *, msg):
     kor_time= utcnow+ time_gap
     time1 = kor_time.strftime('%Y/%m/%d %H:%M')
     a = True
-    msgembed = Embed(title='📢봇공지📢', description=msg, color=embedcolor)
+    msgembed = Embed(title='📢봇공지📢', description='', color=embedcolor)
+    msgembed.add_field(name='ㅤ', value=msg, inline=False)
     msgembed.set_footer(text=f'{ctx.author} | {time1}', icon_url=ctx.author.avatar_url)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     try:
@@ -400,7 +402,6 @@ async def _공지(ctx, *, msg):
         await ctx.send('공지채널없음')
     if a:
         c = b.read().split('\n')
-        print(c)
         c.remove('')
         for i in range(len(c)):
             await app.get_channel(int(c[i].replace('\n', ''))).send(embed=msgembed)
@@ -506,6 +507,31 @@ async def _help_error(ctx, error):
         msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
         msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 (명령어/카테고리)', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
+
+
+@_info.error
+async def _info_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        pointroute = f'{ctx.author.id}_info.txt'
+        b = True
+        try:
+            a = open(pointroute, 'r')
+        except FileNotFoundError:
+            b = False
+            userinfo = f'내용이 없습니다. `{prefix}소개설정` 명령어로 소개말을 설정하세요.'
+        if b:
+            a.close()
+            a = open(pointroute, 'r', encoding='utf-8')
+            userinfo = a.read()
+            a.close()
+        pointroute = f'{ctx.author.id}.txt'
+        msgembed = Embed(title=str(ctx.author), description=userinfo, color=embedcolor)
+        msgembed.set_thumbnail(url=str(ctx.author.avatar_url))
+        msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
+        point = readpoint(ctx.author.id)
+        msgembed.add_field(name='💵유저 포인트💵', value=point)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
 app.remove_command("help")
