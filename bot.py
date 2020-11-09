@@ -289,7 +289,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='yswysw#9328')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 , `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.2.4 - 20201108 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.3.1 - 20201109 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='개발환경', value='윈도우10, Visual Studio Code', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
@@ -406,6 +406,15 @@ async def _공지(ctx, *, msg):
         for i in range(len(c)):
             await app.get_channel(int(c[i].replace('\n', ''))).send(embed=msgembed)
     b.close()
+
+@app.command(name='eval')
+@can_use()
+@is_owner()
+async def _eval(ctx, *, cmd):
+    msgembed = Embed(title='Eval', description='', color=embedcolor)
+    msgembed.add_field(name='**INPUT**', value=f'```py\n{cmd}```', inline=False)
+    msgembed.add_field(name='**OUTPUT**', value=f'```{eval(cmd)}```', inline=False)
+    await ctx.send(embed=msgembed)
 
 @app.command('공지설정')
 @can_use()
