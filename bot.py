@@ -116,7 +116,7 @@ KST = timezone('Asia/Seoul')
 
 def is_owner():
     async def predicate(ctx):
-        return ctx.author.id in [745848200195473490, 557119176590884864, 594183416266752000]
+        return ctx.author.id in [745848200195473490, 557119176590884864, 594183416266752000, 441202161481809922]
     return commands.check(predicate)
 
 def can_use():
