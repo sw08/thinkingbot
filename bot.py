@@ -11,6 +11,7 @@ from os.path import isfile
 import datetime
 from pytz import timezone
 from datetime import timedelta
+import ast
 
 #기본 변수 설정
 
@@ -32,8 +33,8 @@ category_list = [
 
 category_explain = [
     '`도움`, `봇정보`, `핑`',
-    '`정보`, `출석`, `소개설정`, `파일생성`, `찬반투표`',
-    '`밴`, `언밴`, `관리자송금`, `공지`, `공지설정`',
+    '`정보`, `출석`, `소개설정`, `파일생성`, `찬반투표`, `공지설정`, `공지취소`',
+    '`밴`, `언밴`, `관리자송금`, `공지`, `실행`',
     '`사칙연산`, `일차풀기`',
     '`도박`, `송금`'
 ]
@@ -55,7 +56,9 @@ func_list = [
     '관리자송금',
     '공지',
     '찬반투표',
-    '공지설정'
+    '공지설정',
+    '공지취소',
+    '실행'
 ]
 
 func_footer = [
@@ -76,7 +79,9 @@ func_footer = [
     '공지 (내용)'
     '찬반투표 (내용)',
     '공지설정',
-    '도박 (포인트/올인)'
+    '도박 (포인트/올인)',
+    '공지취소',
+    '실행 (파이썬 스크립트)'
 ]
 
 func_explain = [
@@ -97,7 +102,9 @@ func_explain = [
     '공지하기',
     '찬성/반대 투표 생성',
     '공지설정',
-    '도박'
+    '도박',
+    '공지채널 설정 취소',
+    '입력한 코드 실행 (관리자 전용)'
 ]
 
 embedcolor = 0x00ffff
@@ -141,6 +148,18 @@ def writepoint(id, addpoint):
     a = open(pointroute, 'w')
     a.write(str(addpoint))
     a.close()
+
+def insert_returns(body):
+    if isinstance(body[-1], ast.Expr):
+        body[-1] = ast.Return(body[-1].value)
+        ast.fix_missing_locations(body[-1])
+
+    if isinstance(body[-1], ast.If):
+        insert_returns(body[-1].body)
+        insert_returns(body[-1].orelse)
+
+    if isinstance(body[-1], ast.With):
+        insert_returns(body[-1].body)
 
 #이벤트 처리
 
@@ -286,12 +305,11 @@ async def _calcul(ctx, operator, a, b, c):
 @can_use()
 async def _botinfo(ctx):
     msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
-    msgembed.add_field(name='개발자', value='yswysw#9328')
-    msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님 , `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
-    msgembed.add_field (name='상세정보', value='2020년에 만들어진 봇이며, 수학과 다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.3.1 - 20201109 릴리즈', inline=False)
+    msgembed.add_field(name='개발자', value='Team ThinkingBot')
+    msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
+    msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
+    msgembed.add_field(name='버전', value='1.3.2 - 20201109 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
-    msgembed.add_field(name='개발환경', value='윈도우10, Visual Studio Code', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
@@ -407,13 +425,33 @@ async def _공지(ctx, *, msg):
             await app.get_channel(int(c[i].replace('\n', ''))).send(embed=msgembed)
     b.close()
 
-@app.command(name='eval')
+@app.command(name = '실행')
 @can_use()
 @is_owner()
-async def _eval(ctx, *, cmd):
-    msgembed = Embed(title='Eval', description='', color=embedcolor)
+async def eval_fn(ctx, *, cmd):
+    msgembed = Embed(title='실행', description='', color=embedcolor)
     msgembed.add_field(name='**INPUT**', value=f'```py\n{cmd}```', inline=False)
-    msgembed.add_field(name='**OUTPUT**', value=f'```{eval(cmd)}```', inline=False)
+    try:
+        fn_name = "_eval_expr"
+        cmd = cmd.strip("` ")
+        cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
+        body = f"async def {fn_name}():\n{cmd}"
+        parsed = ast.parse(body)
+        body = parsed.body[0].body
+        insert_returns(body)
+        env = {
+            'app': app,
+            'commands': commands,
+            'ctx': ctx,
+            '__import__': __import__
+            }
+        exec(compile(parsed, filename="<ast>", mode="exec"), env)
+
+        result = (await eval(f"{fn_name}()", env))
+        
+    except Exception as a:
+        result = a
+    msgembed.add_field(name="**OUTPUT**", value=f'```{result}```', inline=False)    
     await ctx.send(embed=msgembed)
 
 @app.command('공지설정')
