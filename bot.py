@@ -522,7 +522,7 @@ async def _dobac(ctx, don1):
             writepoint(ctx.author.id, point-int(don))
             msgembed = Embed(title='으아악', description='졌습니다...', color=errorcolor)
             msgembed.add_field(name='원래 있던 돈', value=str(point), inline=False)
-            msgembed.add_field(name='번 돈', value=don, inline=False)
+            msgembed.add_field(name='잃은 돈', value=don, inline=False)
             msgembed.add_field(name='현재 가진 돈', value=str(point-int(don)), inline=False)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
