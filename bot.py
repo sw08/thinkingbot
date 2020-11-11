@@ -33,7 +33,7 @@ category_list = [
 
 category_explain = [
     '`도움`, `봇정보`, `핑`',
-    '`정보`, `출석`, `소개설정`, `파일생성`, `찬반투표`, `공지설정`, `공지취소`',
+    '`정보`, `출석`, `소개설정`, `파일생성`, `찬반투표`, `공지설정`, `공지취소`, `서버정보`',
     '`밴`, `언밴`, `관리자송금`, `공지`, `실행`',
     '`사칙연산`, `일차풀기`',
     '`도박`, `송금`'
@@ -58,7 +58,8 @@ func_list = [
     '찬반투표',
     '공지설정',
     '공지취소',
-    '실행'
+    '실행',
+    '서버정보'
 ]
 
 func_footer = [
@@ -81,7 +82,8 @@ func_footer = [
     '공지설정',
     '도박 (포인트/올인)',
     '공지취소',
-    '실행 (파이썬 스크립트)'
+    '실행 (파이썬 스크립트)',
+    '서버정보'
 ]
 
 func_explain = [
@@ -104,7 +106,8 @@ func_explain = [
     '공지설정',
     '도박',
     '공지채널 설정 취소',
-    '입력한 코드 실행 (관리자 전용)'
+    '입력한 코드 실행 (관리자 전용)',
+    '서버 정보 확인'
 ]
 
 embedcolor = 0x00ffff
@@ -178,6 +181,7 @@ async def on_command_error(ctx, error):
 #커맨드 처리
 
 #일반 카테고리
+
 @app.command(name='출석')
 @can_use()
 async def _chulseok(ctx):
@@ -258,6 +262,71 @@ async def _devote_tof(ctx, *, content):
     a = await ctx.send(embed=msgembed)
     await a.add_reaction('❌')
     await a.add_reaction('✅')
+
+@app.command('공지설정')
+@can_use()
+async def _공지설정(ctx):
+    try:
+        a = open('notice.txt', 'r')
+        b = a.read()
+    except FileNotFoundError:
+        a = open('notice.txt', 'w')
+        b = ''
+    a.close()
+    if str(ctx.channel.id) in b:
+        msgembed = Embed(title='🚫에러🚫', description='이미 등록되어 있음', color=errorcolor)
+    else:
+        os.remove('notice.txt')
+        a = open('notice.txt', 'w')
+        a.write(b + f'\n{ctx.channel.id}')
+        a.close()
+        msgembed = Embed(title='🔔공지설정🔔', description='완료', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
+
+@app.command('공지취소')
+@can_use()
+async def _공지취소(ctx):
+    try:
+        a = open('notice.txt', 'r')
+        b = a.read()
+    except FileNotFoundError:
+        a = open('notice.txt', 'w')
+        b = ''
+    a.close()
+    if not str(ctx.channel.id) in b:
+        msgembed = Embed(title='🚫에러🚫', description='등록되어 있지 않음', color=errorcolor)
+    else:
+        os.remove('notice.txt')
+        a = open('notice.txt', 'w')
+        a.write(b.replace(f'\n{ctx.channel.id}', ''))
+        a.close()
+        msgembed = Embed(title='🔕공지취소🔕', description='완료', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
+
+@app.command(name='서버정보')
+@can_use()
+async def _serverinfo(ctx):
+    msgembed = Embed(title='서버정보', description='', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    msgembed.set_thumbnail(url=ctx.guild.icon_url)
+    server = ctx.guild
+    msgembed.add_field(name='서버이름', value=server, inline=True)
+    msgembed.add_field(name='서버 id', value=str(server.id), inline=True)
+    msgembed.add_field(name='서버 오너', value=f'<@{server.owner_id}>', inline=True)
+    msgembed.add_field(name='서버 인원수', value=server.member_count, inline=True)
+    msgembed.add_field(name='서버 생성일', value=str(server.created_at)[:19], inline=True)
+    msgembed.add_field(name='서버 부스트', value=f'{server.premium_tier}티어, {server.premium_subscription_count}개', inline=True)
+    if len(server.emojis) == 0:
+        emojis = '커스텀 이모지 없음'
+    else:
+        emojis = ''
+        for i in range(len(server.emojis)):
+            emojis = emojis + ', ' + str(server.emojis[i])
+        emojis = emojis[2:len(emojis)]
+    msgembed.add_field(name='이모지 목록', value=emojis, inline=True)
+    await ctx.send(embed=msgembed)
 
 #수학 카테고리
 
@@ -346,7 +415,7 @@ async def _ping(ctx):
 @is_owner()
 async def _ban(ctx, member: Member):
     if isbanned(member.id):
-        await ctx.send('이미 차단당했습니다')
+        msgembed = Embed(title='에러', description='이미 차단되었습니다', color=embedcolor)
     else:
         b = True
         try:
@@ -363,7 +432,9 @@ async def _ban(ctx, member: Member):
             a = open('ban.txt', 'w')
             a.write(f'{banned_members}\n{member.id}')
             a.close()
-            await ctx.send(f'{member.mention} 님은 ThinkingBot에게서 차단되었습니다. 이의는 ThinkingBot 관리자에게 제출해 주십시오.')
+            msgembed = Embed(title='밴', description=f'{member.mention} 님은 ThinkingBot에게서 차단되었습니다. 이의는 ThinkingBot 관리자에게 제출해 주십시오.', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
 
 @app.command(name='언밴')
 @can_use()
@@ -385,9 +456,11 @@ async def _ban(ctx, member: Member):
             a = open('ban.txt', 'w')
             a.write(banned_members)
             a.close()
-            await ctx.send(f'{member.mention} 님은 ThinkingBot에게서 차단이 풀렸습니다.')
+            msgembed = Embed(title='밴', description=f'{member.mention} 님은 ThinkingBot에게서 차단이 풀렸습니다.', color=embedcolor)
     else:
-        await ctx.send('차단당한적이 없습니다')
+        msgembed = Embed(title='에러', description='차단된 적이 없습니다', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
 
 @app.command(name='관리자송금')
 @can_use()
@@ -431,6 +504,7 @@ async def _공지(ctx, *, msg):
 async def eval_fn(ctx, *, cmd):
     msgembed = Embed(title='실행', description='', color=embedcolor)
     msgembed.add_field(name='**INPUT**', value=f'```py\n{cmd}```', inline=False)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     try:
         fn_name = "_eval_expr"
         cmd = cmd.strip("` ")
@@ -452,49 +526,6 @@ async def eval_fn(ctx, *, cmd):
     except Exception as a:
         result = a
     msgembed.add_field(name="**OUTPUT**", value=f'```{result}```', inline=False)    
-    await ctx.send(embed=msgembed)
-
-@app.command('공지설정')
-@can_use()
-async def _공지설정(ctx):
-    try:
-        a = open('notice.txt', 'r')
-        b = a.read()
-    except FileNotFoundError:
-        a = open('notice.txt', 'w')
-        b = ''
-    a.close()
-    if str(ctx.channel.id) in b:
-        msgembed = Embed(title='🚫에러🚫', description='이미 등록되어 있음', color=errorcolor)
-    else:
-        os.remove('notice.txt')
-        a = open('notice.txt', 'w')
-        a.write(b + f'\n{ctx.channel.id}')
-        a.close()
-        msgembed = Embed(title='🔔공지설정🔔', description='완료', color=embedcolor)
-    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-    await ctx.send(embed=msgembed)
-
-
-@app.command('공지취소')
-@can_use()
-async def _공지취소(ctx):
-    try:
-        a = open('notice.txt', 'r')
-        b = a.read()
-    except FileNotFoundError:
-        a = open('notice.txt', 'w')
-        b = ''
-    a.close()
-    if not str(ctx.channel.id) in b:
-        msgembed = Embed(title='🚫에러🚫', description='등록되어 있지 않음', color=errorcolor)
-    else:
-        os.remove('notice.txt')
-        a = open('notice.txt', 'w')
-        a.write(b.replace(f'\n{ctx.channel.id}', ''))
-        a.close()
-        msgembed = Embed(title='🔕공지취소🔕', description='완료', color=embedcolor)
-    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
 #포인트 카테고리
