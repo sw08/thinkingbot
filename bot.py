@@ -435,6 +435,7 @@ async def _ban(ctx, member: Member):
             msgembed = Embed(title='밴', description=f'{member.mention} 님은 ThinkingBot에게서 차단되었습니다. 이의는 ThinkingBot 관리자에게 제출해 주십시오.', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
+    await ctx.send(member.mention + ' <:Ban:776014153860513814>')
 
 @app.command(name='언밴')
 @can_use()
@@ -498,7 +499,7 @@ async def _공지(ctx, *, msg):
             await app.get_channel(int(c[i].replace('\n', ''))).send(embed=msgembed)
     b.close()
 
-@app.command(name = '실행')
+@app.command(name='실행')
 @can_use()
 @is_owner()
 async def eval_fn(ctx, *, cmd):
