@@ -532,14 +532,18 @@ async def _dobac(ctx, don1):
 async def _sendmoney(ctx, member: Member, money):
     point = readpoint(ctx.author.id)
     if point < int(money):
-        await ctx.send('돈이 부족합니다....')
+        msgembed = Embed(title='에러', description=f'돈이 부족합니다\n현재 있는 돈은 {readpoint(ctx.author.id)}입니다', color=errorcolor)
+    elif point < 0:
+        msgembed = Embed(title='에러', description='1 이상부터 걸 수 있습니다', color=errorcolor)
+    elif int(point) != float(point):
+        msgembed = Embed(title='에러', description='정수만 걸 수 있습니다', color=errorcolor)
     else:
         writepoint(ctx.author.id, point-int(money))
         point = readpoint(member.id)
         writepoint(member.id, point+int(money))
         msgembed = Embed(title='송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
+    await ctx.send(embed=msgembed)
 
 #에러 처리
 
