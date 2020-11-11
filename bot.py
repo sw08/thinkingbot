@@ -491,7 +491,7 @@ async def _공지취소(ctx):
     else:
         os.remove('notice.txt')
         a = open('notice.txt', 'w')
-        a.write(b.replace(f'{ctx.channel.id}\n', ''))
+        a.write(b.replace(f'\n{ctx.channel.id}', ''))
         a.close()
         msgembed = Embed(title='🔕공지취소🔕', description='완료', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
