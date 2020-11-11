@@ -533,10 +533,10 @@ async def _sendmoney(ctx, member: Member, money):
     point = readpoint(ctx.author.id)
     if point < int(money):
         msgembed = Embed(title='에러', description=f'돈이 부족합니다\n현재 있는 돈은 {readpoint(ctx.author.id)}입니다', color=errorcolor)
-    elif point < 0:
-        msgembed = Embed(title='에러', description='1 이상부터 걸 수 있습니다', color=errorcolor)
-    elif int(point) != float(point):
-        msgembed = Embed(title='에러', description='정수만 걸 수 있습니다', color=errorcolor)
+    elif int(money) < 1:
+        msgembed = Embed(title='에러', description='1 이상부터 보낼 수 있습니다', color=errorcolor)
+    elif int(money) != float(money):
+        msgembed = Embed(title='에러', description='정수만 보낼 수 있습니다', color=errorcolor)
     else:
         writepoint(ctx.author.id, point-int(money))
         point = readpoint(member.id)
