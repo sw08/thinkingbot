@@ -35,7 +35,7 @@ category_explain = [
     '`도움`, `봇정보`, `핑`',
     '`정보`, `출석`, `소개설정`, `파일생성`, `찬반투표`, `공지설정`, `공지취소`, `서버정보`',
     '`밴`, `언밴`, `관리자송금`, `공지`, `실행`',
-    '`사칙연산`, `일차풀기`',
+    '`사칙연산`, `일차풀기`, `소수`',
     '`도박`, `송금`'
 ]
 
@@ -59,7 +59,8 @@ func_list = [
     '공지설정',
     '공지취소',
     '실행',
-    '서버정보'
+    '서버정보',
+    '소수'
 ]
 
 func_footer = [
@@ -83,7 +84,8 @@ func_footer = [
     '도박 (포인트/올인)',
     '공지취소',
     '실행 (파이썬 스크립트)',
-    '서버정보'
+    '서버정보',
+    '소수 (첫번째 값) (두번째 값)'
 ]
 
 func_explain = [
@@ -107,7 +109,8 @@ func_explain = [
     '도박',
     '공지채널 설정 취소',
     '입력한 코드 실행 (관리자 전용)',
-    '서버 정보 확인'
+    '서버 정보 확인',
+    '첫번째 값과 두번째 값 사이의 소수들을 구함'
 ]
 
 embedcolor = 0x00ffff
@@ -163,6 +166,18 @@ def insert_returns(body):
 
     if isinstance(body[-1], ast.With):
         insert_returns(body[-1].body)
+
+def get_prime(start, end):
+    # 에라토스테네스의 체 초기화: end개 요소에 True 설정(소수로 간주)
+    sieve = [True] * end
+    # end의 최대 약수가 sqrt(end) 이하이므로 i=sqrt(end)까지 검사
+    m = int(end ** 0.5)
+    for i in range(start, m + 1):
+        if sieve[i] == True:           # i가 소수인 경우
+            for j in range(i+i, end, i): # i이후 i의 배수들을 False 판정
+                sieve[j] = False
+    # 소수 목록 산출
+    return [i for i in range(2, end) if sieve[i] == True]
 
 #이벤트 처리
 
@@ -368,6 +383,26 @@ async def _calcul(ctx, operator, a, b, c):
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
+@app.command(name='소수')
+@can_use()
+async def _prime(ctx, start, end):
+    if int(start) >= int(end):
+        msgembed = Embed(title='에러', description='첫번째 값은 두번째 값보다 작아야 합니다', color=errorcolor)
+    elif int(start) < 2:
+        msgembed = Embed(title='에러', description='첫번째 값은 최소 2입니다', color=errorcolor)
+    else:
+        primes = get_prime(int(start), int(end))
+        if len(primes) == 0:
+            prime_str == '없음'
+        else:
+            prime_str = ''
+            for i in range(len(primes)):
+                prime_str = prime_str + ', ' + str(primes[i])
+            prime_str = prime_str[2:len(prime_str)]
+        msgembed = Embed(title='소수', description=f'**{start} ~ {end} 사이의 소수:**\n{prime_str}', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
+
 #지원 카테고리
 
 @app.command(name='봇정보')
@@ -377,7 +412,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='Team ThinkingBot')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.3.4 - 20201111 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.4.1 - 20201113 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
@@ -396,7 +431,7 @@ async def _help(ctx, what_you_look_for):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 {what_you_look_for}', icon_url=ctx.author.avatar_url)
     
     else:
-        msgembed = Embed(title='🚫에러🚫', description='음.... 아직 그런 카테고리는 없습니다.', color=errorcolor)
+        msgembed = Embed(title='🚫에러🚫', description='음.... 아직 그런 카테고리/명령어는 없습니다.', color=errorcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
