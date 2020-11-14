@@ -12,6 +12,7 @@ import datetime
 from pytz import timezone
 from datetime import timedelta
 import ast
+from PIL import Image, ImageDraw, ImageFont
 
 #기본 변수 설정
 
