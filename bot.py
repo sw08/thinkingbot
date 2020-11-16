@@ -215,7 +215,7 @@ async def _chulseok(ctx):
         b = False
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id)
-        writepoint(ctx.author.id, 1+point)
+        writepoint(ctx.author.id, 100+point)
         point += 1
         msgembed = Embed(title='출석 완료', description=f'출석이 완료되었습니다. \n 현재 포인트: {point}', color=embedcolor)
     a.close()
