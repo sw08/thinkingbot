@@ -609,6 +609,41 @@ async def _sendmoney(ctx, member: Member, money):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
+@app.command(name='기부')
+@can_use()
+async def _Gibu(ctx, point):
+    if (int(point) != float(point)) or (int(point) <= 0):
+        msgembed = Embed(title='에러', description='형식이 잘못되었습니다. 자연수 형식이어야 합니다', color=errorcolor)
+    elif readpoint(ctx.author.id) < int(point):
+        msgembed = Embed(title='에러', description='돈이 부족합니다', color=errorcolor)
+    else:
+        writepoint(ctx.author.id, readpoint(ctx.author.id)-int(point))
+        try:
+            a = open('Gibu.txt', 'r').read()
+        except FileNotFoundError:
+            c = open('Gibu.txt', 'w')
+            c.write('0')
+            c.close()
+            a = '0'
+        b = open('Gibu.txt', 'w')
+        b.write(str(int(a)+int(point)))
+        b.close()
+        a = open('Gibu.txt', 'r').read()
+        userpoint = readpoint(ctx.author.id)
+        msgembed = Embed(title='기부', description=f'{point}원이 기부되었습니다.\n남은 돈: {userpoint}\n현재 기부금: {a}', color=embedcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
+
+@app.command(name='기부금')
+@can_use()
+async def _Gibugeum(ctx, arg1):
+    if arg1 == '회수':
+        a = int(open('Gibu.txt', 'r').read())
+        writepoint(ctx.author.id, a+readpoint(ctx.author.id))
+        msgembed = Embed(title='기부금 회수', description=f'{a}원이 회수되었습니다', color=embedcolor)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
+
 #에러 처리
 
 @_help.error
@@ -624,6 +659,13 @@ async def _help_error(ctx, error):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 (명령어/카테고리)', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
+@_help.error
+async def _help_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        a = open('Gibu.txt', 'r').read()
+        msgembed = Embed(title='기부금', description=f'현재 기부금: {a}원', color=embedcolor)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
 
 @_info.error
 async def _info_error(ctx, error):
