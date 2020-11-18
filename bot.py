@@ -213,7 +213,7 @@ async def _chulseok(ctx):
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id) + 100
         writepoint(ctx.author.id, point)
-        msgembed = Embed(title='출석 완료', description=f'출석이 완료되었습니다. \n 현재 포인트: {point}', color=embedcolor)
+        msgembed = Embed(title='출석 완료', description=f'출석이 완료되었습니다. \n 현재 포인트: `{point}``', color=embedcolor)
     a.close()
     if b:
         msgembed = Embed(title='🚫에러🚫', description='이미 출석했습니다', color=errorcolor)
@@ -327,7 +327,7 @@ async def _serverinfo(ctx):
     msgembed.add_field(name='서버이름', value=server, inline=True)
     msgembed.add_field(name='서버 id', value=str(server.id), inline=True)
     msgembed.add_field(name='서버 오너', value=f'<@{server.owner_id}>', inline=True)
-    msgembed.add_field(name='서버 인원수', value=server.member_count, inline=True)
+    msgembed.add_field(name='서버 인원수', value=f'`{server.member_count}`', inline=True)
     msgembed.add_field(name='서버 생성일', value=str(server.created_at)[:19], inline=True)
     msgembed.add_field(name='서버 부스트', value=f'{server.premium_tier}티어, {server.premium_subscription_count}개', inline=True)
     if len(server.emojis) == 0:
@@ -392,9 +392,9 @@ async def _prime(ctx, start, end):
         if len(primes) == 0:
             prime_str == '없음'
         else:
-            prime_str = ''
+            prime_str = '`'
             for i in range(len(primes)):
-                prime_str = prime_str + ', ' + str(primes[i])
+                prime_str = prime_str + '`, `' + str(primes[i]) + '`'
             prime_str = prime_str[2:len(prime_str)]
         msgembed = Embed(title='소수', description=f'**{start} ~ {end} 사이의 소수:**\n{prime_str}', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
@@ -409,7 +409,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='Team ThinkingBot')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.4.2 - 20201116 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.5.1 - 20201118 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
@@ -436,7 +436,7 @@ async def _help(ctx, what_you_look_for):
 @can_use()
 async def _ping(ctx):
     la = app.latency
-    msgembed = Embed(title='핑', description=f'{str(round(la * 1000))}ms', color=embedcolor)
+    msgembed = Embed(title='핑', description=f'`{str(round(la * 1000))}`ms', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -467,7 +467,6 @@ async def _ban(ctx, member: Member):
             msgembed = Embed(title='밴', description=f'{member.mention} 님은 ThinkingBot에게서 차단되었습니다. 이의는 ThinkingBot 관리자에게 제출해 주십시오.', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
-    await ctx.send(member.mention + ' <:Ban:776014153860513814>')
 
 @app.command(name='언밴')
 @can_use()
@@ -501,7 +500,7 @@ async def _ban(ctx, member: Member):
 async def _sendmoney(ctx, member: Member, money):
     point = readpoint(member.id)
     writepoint(member.id, point+int(money))
-    msgembed = Embed(title='관리자송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
+    msgembed = Embed(title='관리자송금', description=f'{member.mention}님께 `{money}`원이 송금되었습니다', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -579,15 +578,13 @@ async def _dobac(ctx, don1):
         if randint(0,1):
             writepoint(ctx.author.id, point+int(don))
             msgembed = Embed(title='와아아', description='이겼습니다!', color=embedcolor)
-            msgembed.add_field(name='원래 있던 돈', value=str(point), inline=False)
-            msgembed.add_field(name='번 돈', value=don, inline=False)
-            msgembed.add_field(name='현재 가진 돈', value=str(point+int(don)), inline=False)
+            msgembed.add_field(name='번 돈', value=f'`{don}`', inline=False)
+            msgembed.add_field(name='현재 가진 돈', value=f'`{point+int(don)}`', inline=False)
         else:
             writepoint(ctx.author.id, point-int(don))
             msgembed = Embed(title='으아악', description='졌습니다...', color=errorcolor)
-            msgembed.add_field(name='원래 있던 돈', value=str(point), inline=False)
-            msgembed.add_field(name='잃은 돈', value=don, inline=False)
-            msgembed.add_field(name='현재 가진 돈', value=str(point-int(don)), inline=False)
+            msgembed.add_field(name='잃은 돈', value=f'`{don}`', inline=False)
+            msgembed.add_field(name='현재 가진 돈', value=f'`{point-int(don)}`', inline=False)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -596,7 +593,7 @@ async def _dobac(ctx, don1):
 async def _sendmoney(ctx, member: Member, money):
     point = readpoint(ctx.author.id)
     if point < int(money):
-        msgembed = Embed(title='에러', description=f'돈이 부족합니다\n현재 있는 돈은 {readpoint(ctx.author.id)}입니다', color=errorcolor)
+        msgembed = Embed(title='에러', description=f'돈이 부족합니다\n현재 있는 돈은 `{readpoint(ctx.author.id)}`입니다', color=errorcolor)
     elif int(money) < 1:
         msgembed = Embed(title='에러', description='1 이상부터 보낼 수 있습니다', color=errorcolor)
     elif int(money) != float(money):
@@ -605,7 +602,7 @@ async def _sendmoney(ctx, member: Member, money):
         writepoint(ctx.author.id, point-int(money))
         point = readpoint(member.id)
         writepoint(member.id, point+int(money))
-        msgembed = Embed(title='송금', description=f'{member.mention}님께 {money}원이 송금되었습니다', color=embedcolor)
+        msgembed = Embed(title='송금', description=f'{member.mention}님께 `{money}`원이 송금되었습니다', color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -630,7 +627,7 @@ async def _Gibu(ctx, point):
         b.close()
         a = open('Gibu.txt', 'r').read()
         userpoint = readpoint(ctx.author.id)
-        msgembed = Embed(title='기부', description=f'{point}원이 기부되었습니다.\n남은 돈: {userpoint}\n현재 기부금: {a}', color=embedcolor)
+        msgembed = Embed(title='기부', description=f'`{point}`원이 기부되었습니다.\n남은 돈: `{userpoint}`\n현재 기부금: `{a}`', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -640,9 +637,12 @@ async def _Gibugeum(ctx, arg1):
     if arg1 == '회수':
         a = int(open('Gibu.txt', 'r').read())
         writepoint(ctx.author.id, a+readpoint(ctx.author.id))
-        msgembed = Embed(title='기부금 회수', description=f'{a}원이 회수되었습니다', color=embedcolor)
+        msgembed = Embed(title='기부금 회수', description=f'`{a}`원이 회수되었습니다', color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
+        a = open('Gibu.txt', 'w')
+        a.write('0')
+        a.close()
 
 #에러 처리
 
@@ -659,11 +659,11 @@ async def _help_error(ctx, error):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 (명령어/카테고리)', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
-@_help.error
-async def _help_error(ctx, error):
+@_Gibugeum.error
+async def _Gibugeum_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         a = open('Gibu.txt', 'r').read()
-        msgembed = Embed(title='기부금', description=f'현재 기부금: {a}원', color=embedcolor)
+        msgembed = Embed(title='기부금', description=f'현재 기부금: `{a}`원', color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
