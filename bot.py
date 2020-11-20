@@ -19,7 +19,7 @@ import koreanbots
 prefix ="''"
 
 app = commands.Bot(command_prefix=["''", '"'])
-Bot = koreanbots.Client(client, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc1MDU1NzI0Nzg0MjU0OTg3MSIsImlhdCI6MTYwNTc0OTQzMywiZXhwIjoxNjM3MzA3MDMzfQ.b_nT47WLegjiOg6oth02zlOItYdhpYf9qVkVyI9a7hAFUrLvJqd4KzCDAcWN98e5RBAcPYRAr93TNNqK6FL-m9sBooXsVncEsnuuvJfVZMrJe3m07goumtkXBzJlkqBcw1sPLfxN_v9oDPV7kGqhPhoUiyZUciWtDwJqtd64Ro8')
+Bot = koreanbots.Client(app, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc1MDU1NzI0Nzg0MjU0OTg3MSIsImlhdCI6MTYwNTc0OTQzMywiZXhwIjoxNjM3MzA3MDMzfQ.b_nT47WLegjiOg6oth02zlOItYdhpYf9qVkVyI9a7hAFUrLvJqd4KzCDAcWN98e5RBAcPYRAr93TNNqK6FL-m9sBooXsVncEsnuuvJfVZMrJe3m07goumtkXBzJlkqBcw1sPLfxN_v9oDPV7kGqhPhoUiyZUciWtDwJqtd64Ro8')
 
 a = open('token.txt', 'r')
 token = a.read()
