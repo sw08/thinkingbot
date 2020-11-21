@@ -237,7 +237,7 @@ async def _setInfo(ctx, *, content):
     a.close()
     msgembed = Embed(title='변경 완료', description=f'소개말이 {content} (으)로 변경되었습니다', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-    await ctx.send(Embed=msgembed)
+    await ctx.send(embed=msgembed)
     
 @app.command(name='정보')
 @can_use()
@@ -281,7 +281,7 @@ async def _devote_tof(ctx, *, content):
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     a = await ctx.send(embed=msgembed)
     await a.add_reaction('❌')
-    await a.add_reaction('✅')
+    await a.add_reacti  on('✅')
 
 @app.command('공지설정')
 @can_use()
