@@ -281,7 +281,7 @@ async def _devote_tof(ctx, *, content):
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     a = await ctx.send(embed=msgembed)
     await a.add_reaction('❌')
-    await a.add_reacti  on('✅')
+    await a.add_reaction('✅')
 
 @app.command('공지설정')
 @can_use()
