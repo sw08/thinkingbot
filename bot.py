@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #모듈 임포트
 
 from discord import *
