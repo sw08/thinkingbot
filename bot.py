@@ -29,6 +29,7 @@ Bot = koreanbots.Client(app, ko_bot_token)
 a = open('token.txt', 'r')
 token = a.read()
 a.close()
+MEMBERS = [745848200195473490, 557119176590884864, 594183416266752000, 441202161481809922, 726350177601978438]
 
 category_list = [
     '지원',
@@ -133,7 +134,7 @@ KST = timezone('Asia/Seoul')
 
 def is_owner():
     async def predicate(ctx):
-        return ctx.author.id in [745848200195473490, 557119176590884864, 594183416266752000, 441202161481809922, 726350177601978438]
+        return ctx.author.id in MEMBERS
     return commands.check(predicate)
 
 def can_use():
@@ -422,7 +423,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='Team ThinkingBot')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.5.4 - 20201124 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.5.5 - 20201125 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
