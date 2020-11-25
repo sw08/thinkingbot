@@ -199,12 +199,6 @@ async def on_ready():
     game = Game(f'{prefix}도움')
     await app.change_presence(status=Status.online, activity=game)
     
-
-@app.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CommandNotFound):
-        pass
-
 #커맨드 처리
 
 #일반 카테고리
@@ -430,7 +424,7 @@ async def _botinfo(ctx):
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
-@app.command(name='도움', aliases=[도움말", 'help'])
+@app.command(name='도움', aliases=["도움말", 'help'])
 @can_use()
 async def _help(ctx, what_you_look_for):
     if what_you_look_for in func_list:
@@ -705,5 +699,9 @@ async def _info_error(ctx, error):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
 
+@app.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.errors.CommandNotFound):
+        pass
 
 app.run(token)
