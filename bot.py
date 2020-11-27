@@ -703,5 +703,7 @@ async def _info_error(ctx, error):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CommandNotFound):
         pass
+    else:
+        await ctx.send(embed=Embed(title="에러 발생", description=f"```{error}```"))
 
 app.run(token)
