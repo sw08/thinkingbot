@@ -125,6 +125,17 @@ func_explain = [
     '기부금을 확인하거나 회수함'
 ]
 
+passerror_func = [
+    '"도움',
+    '"도움말',
+    '"help',
+    '"정보',
+    "''정보",
+    "''도움",
+    "''도움말",
+    "''help"
+]
+
 embedcolor = 0x00ffff
 errorcolor = 0xff0000
 
@@ -704,6 +715,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CommandNotFound):
         pass
     else:
-        await ctx.send(embed=Embed(title="에러 발생", description=f"```{error}```"))
+        if not ctx.message.content in passerror_func:
+            await ctx.send(embed=Embed(title="에러 발생", description=f"```{error}```"))
 
 app.run(token)
