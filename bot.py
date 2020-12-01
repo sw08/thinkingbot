@@ -530,31 +530,34 @@ async def _공지(ctx, *, msg):
 @can_use()
 @is_owner()
 async def eval_fn(ctx, *, cmd):
-    msgembed = Embed(title='실행', description='', color=embedcolor)
-    msgembed.add_field(name='**INPUT**', value=f'```py\n{cmd}```', inline=False)
-    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-    try:
-        fn_name = "_eval_expr"
-        cmd = cmd.strip("` ")
-        cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
-        body = f"async def {fn_name}():\n{cmd}"
-        parsed = ast.parse(body)
-        body = parsed.body[0].body
-        insert_returns(body)
-        env = {
-            'app': app,
-            'commands': commands,
-            'ctx': ctx,
-            '__import__': __import__
-            }
-        exec(compile(parsed, filename="<ast>", mode="exec"), env)
+    if ctx.message.content.find("os.system") == -1 and ctx.message.content.find("from os import system") == -1 :
+        msgembed = Embed(title='실행', description='', color=embedcolor)
+        msgembed.add_field(name='**INPUT**', value=f'```py\n{cmd}```', inline=False)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        try:
+            fn_name = "_eval_expr"
+            cmd = cmd.strip("` ")
+            cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
+            body = f"async def {fn_name}():\n{cmd}"
+            parsed = ast.parse(body)
+            body = parsed.body[0].body
+            insert_returns(body)
+            env = {
+                'app': app,
+                'commands': commands,
+                'ctx': ctx,
+                '__import__': __import__
+                }
+            exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
-        result = (await eval(f"{fn_name}()", env))
+            result = (await eval(f"{fn_name}()", env))
         
-    except Exception as a:
-        result = a
-    msgembed.add_field(name="**OUTPUT**", value=f'```{result}```', inline=False)    
-    await ctx.send(embed=msgembed)
+        except Exception as a:
+            result = a
+        msgembed.add_field(name="**OUTPUT**", value=f'```{result}```', inline=False)    
+        await ctx.send(embed=msgembed)
+    else:
+        await ctx.send("You Can't Use That!")
 
 #포인트 카테고리
 
@@ -691,5 +694,9 @@ async def _info_error(ctx, error):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CommandNotFound):
         pass
+    elif ctx.command is app.get_command("도움") or ctx.command is app.get_command("정보"):
+        pass
+    else:
+        await ctx.send(embed=Embed(title="에러 발생", description=f"```{error}```"))
 
 app.run(token)
