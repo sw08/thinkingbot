@@ -18,18 +18,17 @@ import koreanbots
 
 prefix ="''"
 
-a = open('koreanbots_token.txt', 'r')
-ko_bot_token = a.read()
-a.close()
+with open('koreanbots_token.txt', 'r') as a:
+    ko_bot_token = a.read()
 
 app = commands.Bot(command_prefix=["''", '"'], intents=Intents.all())
 app.remove_command("help")
 Bot = koreanbots.Client(app, ko_bot_token)
 
-a = open('token.txt', 'r')
-token = a.read()
-a.close()
-MEMBERS = [745848200195473490, 557119176590884864, 594183416266752000, 441202161481809922, 726350177601978438, 734560292024877056]
+with open('token.txt', 'r') as a:
+    token = a.read()
+
+MEMBERS = [745848200195473490, 557119176590884864, 594183416266752000, 441202161481809922, 726350177601978438]
 
 category_list = [
     '지원',
@@ -244,17 +243,11 @@ async def _setInfo(ctx, *, content):
 async def _info(ctx, member : Member):
     id = member.id
     pointroute = f'{id}_info.txt'
-    b = True
     try:
-        a = open(pointroute, 'r')
+        with open(pointroute, 'r', encoding='utf-8') as a:
+            userinfo = a.read()
     except FileNotFoundError:
-        b = False
         userinfo = f'내용이 없습니다. `{prefix}소개설정` 명령어로 소개말을 설정하세요.'
-    if b:
-        a.close()
-        a = open(pointroute, 'r', encoding='utf-8')
-        userinfo = a.read()
-        a.close()
     pointroute = f'{id}.txt'
     msgembed = Embed(title=str(member), description=userinfo, color=embedcolor)
     msgembed.set_thumbnail(url=str(member.avatar_url))
@@ -267,9 +260,8 @@ async def _info(ctx, member : Member):
 @app.command(name='파일생성')
 @can_use()
 async def _makefile(ctx, filename, *, content):
-    a = open(filename, 'w')
-    a.write(content)
-    a.close()
+    with open(filename, 'w') as a:
+        a.write(content)
     file1 = File(filename)
     await ctx.send(file=file1)
     os.remove(filename)
@@ -287,12 +279,11 @@ async def _devote_tof(ctx, *, content):
 @can_use()
 async def _공지설정(ctx):
     try:
-        a = open('notice.txt', 'r')
-        b = a.read()
+        with open('notice.txt', 'r') as a:
+            b = a.read()
     except FileNotFoundError:
-        a = open('notice.txt', 'w')
+        open('notice.txt', 'w')
         b = ''
-    a.close()
     if str(ctx.channel.id) in b:
         msgembed = Embed(title='🚫에러🚫', description='이미 등록되어 있음', color=errorcolor)
     else:
@@ -308,12 +299,11 @@ async def _공지설정(ctx):
 @can_use()
 async def _공지취소(ctx):
     try:
-        a = open('notice.txt', 'r')
-        b = a.read()
+        with open('notice.txt', 'r') as a:
+            b = a.read()
     except FileNotFoundError:
-        a = open('notice.txt', 'w')
+        open('notice.txt', 'w')
         b = ''
-    a.close()
     if not str(ctx.channel.id) in b:
         msgembed = Embed(title='🚫에러🚫', description='등록되어 있지 않음', color=errorcolor)
     else:
@@ -353,7 +343,6 @@ async def _serverinfo(ctx):
 @app.command(name='사칙연산')
 @can_use()
 async def _calcul(ctx, n1, operator, n2):
-    b = True
     msgembed = Embed(title='사칙연산', description='', color=embedcolor)
     msgembed.add_field(name='**Input**', value=f'```{n1}{operator}{n2}```', inline=False)
     if operator == '+':
@@ -365,13 +354,12 @@ async def _calcul(ctx, n1, operator, n2):
     elif operator == '*' or operator == '×':
         a = float(n1)*float(n2)
     else:
-        b = False
+        return
     if float(int(a)) == a:
         a = int(a)
     msgembed.add_field(name='**Output**', value=f'```{a}```', inline='True')
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-    if b:
-        await ctx.send(embed=msgembed)
+    await ctx.send(embed=msgembed)
 
 @app.command(name='일차풀기')
 @can_use()
