@@ -230,7 +230,7 @@ async def _chulseok(ctx):
 
 @app.command(name='소개설정')
 @can_use()
-async def _setInfo(ctx, *, content):
+async def _setInfo(ctx, *, content=None):
     pointroute = f'{ctx.author.id}_info.txt'
     a = open(pointroute, 'w', encoding='utf-8')
     a.write(content)
@@ -241,7 +241,7 @@ async def _setInfo(ctx, *, content):
     
 @app.command(name='정보')
 @can_use()
-async def _info(ctx, member : Member):
+async def _info(ctx, member : Member = None):
     id = member.id
     pointroute = f'{id}_info.txt'
     b = True
@@ -280,8 +280,8 @@ async def _devote_tof(ctx, *, content):
     msgembed = Embed(title='투표', description=content, color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     a = await ctx.send(embed=msgembed)
-    await a.add_reaction('❌')
-    await a.add_reaction('✅')
+    await a.add_reaction('<a:no:782806057587048480>')
+    await a.add_reaction('<a:check:782806094594310214>')
 
 @app.command('공지설정')
 @can_use()
@@ -338,15 +338,6 @@ async def _serverinfo(ctx):
     msgembed.add_field(name='서버 인원수', value=f'`{server.member_count}`', inline=True)
     msgembed.add_field(name='서버 생성일', value=str(server.created_at)[:19], inline=True)
     msgembed.add_field(name='서버 부스트', value=f'{server.premium_tier}티어, {server.premium_subscription_count}개', inline=True)
-    if len(server.emojis) == 0:
-        emojis = '커스텀 이모지 없음'
-    else:
-        emojis = ''
-        for i in range(len(server.emojis)):
-            emojis = emojis + ', ' + str(server.emojis[i])
-        emojis = emojis[2:len(emojis)]
-    msgembed.add_field(name='이모지 목록', value=emojis, inline=True)
-    await ctx.send(embed=msgembed)
 
 #수학 카테고리
 
@@ -426,7 +417,7 @@ async def _botinfo(ctx):
 
 @app.command(name='도움', aliases=["도움말", 'help'])
 @can_use()
-async def _help(ctx, what_you_look_for):
+async def _help(ctx, what_you_look_for=None):
     if what_you_look_for in func_list:
         msgembed = Embed(title=f'도움 - {what_you_look_for}', description=func_explain[func_list.index(what_you_look_for)], color=embedcolor)
         msgembed.set_footer(text=f'{ctx.author} | {prefix}{func_footer[func_list.index(what_you_look_for)]}', icon_url=ctx.author.avatar_url)
@@ -496,7 +487,7 @@ async def _ban(ctx, member: Member):
             a = open('ban.txt', 'w')
             a.write(banned_members)
             a.close()
-            msgembed = Embed(title='밴', description=f'{member.mention} 님은 ThinkingBot에게서 차단이 풀렸습니다.', color=embedcolor)
+            msgembed = Embed(title='언밴', description=f'{member.mention} 님은 ThinkingBot에게서 차단이 풀렸습니다.', color=embedcolor)
     else:
         msgembed = Embed(title='에러', description='차단된 적이 없습니다', color=embedcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
@@ -563,10 +554,11 @@ async def eval_fn(ctx, *, cmd):
             exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
             result = (await eval(f"{fn_name}()", env))
-        
         except Exception as a:
             result = a
-        msgembed.add_field(name="**OUTPUT**", value=f'```{result}```', inline=False)    
+        if result == '':
+            result = None
+        msgembed.add_field(name="**OUTPUT**", value=f'```py\n{result}```', inline=False)    
         await ctx.send(embed=msgembed)
     else:
         await ctx.send("You Can't Use That!")
@@ -644,7 +636,7 @@ async def _Gibu(ctx, point):
 
 @app.command(name='기부금')
 @can_use()
-async def _Gibugeum(ctx, arg1):
+async def _Gibugeum(ctx, arg1=None):
     if arg1 == '회수':
         a = int(open('Gibu.txt', 'r').read())
         writepoint(ctx.author.id, a+readpoint(ctx.author.id))
@@ -705,8 +697,6 @@ async def _info_error(ctx, error):
 @app.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CommandNotFound):
-        pass
-    elif ctx.command is app.get_command("도움") or ctx.command is app.get_command("정보"):
         pass
     else:
         await ctx.send(embed=Embed(title="에러 발생", description=f"```{error}```"))
