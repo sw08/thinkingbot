@@ -241,7 +241,10 @@ async def _setInfo(ctx, *, content=None):
 @app.command(name='정보')
 @can_use()
 async def _info(ctx, member : Member = None):
-    id = member.id
+    if member == None:
+        id = ctx.author.id
+    else:
+        id = member.id
     pointroute = f'{id}_info.txt'
     try:
         with open(pointroute, 'r', encoding='utf-8') as a:
@@ -406,17 +409,27 @@ async def _botinfo(ctx):
 @app.command(name='도움', aliases=["도움말", 'help'])
 @can_use()
 async def _help(ctx, what_you_look_for=None):
-    if what_you_look_for in func_list:
-        msgembed = Embed(title=f'도움 - {what_you_look_for}', description=func_explain[func_list.index(what_you_look_for)], color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}{func_footer[func_list.index(what_you_look_for)]}', icon_url=ctx.author.avatar_url)
-
-    elif what_you_look_for in category_list:
-        msgembed = Embed(title=f'도움 - {what_you_look_for}', description=category_explain[category_list.index(what_you_look_for)], color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 {what_you_look_for}', icon_url=ctx.author.avatar_url)
-    
+    if what_you_look_for == None:
+        msgembed = Embed(title='도움', description='도움말', color=embedcolor)
+        msgembed.set_thumbnail(url='https://thinkingbot.kro.kr/profile.png')
+        msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
+        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`', inline=False)
+        msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
+        msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
+        msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 (명령어/카테고리)', icon_url=ctx.author.avatar_url
     else:
-        msgembed = Embed(title='🚫에러🚫', description='음.... 아직 그런 카테고리/명령어는 없습니다.', color=errorcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        if what_you_look_for in func_list:
+            msgembed = Embed(title=f'도움 - {what_you_look_for}', description=func_explain[func_list.index(what_you_look_for)], color=embedcolor)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}{func_footer[func_list.index(what_you_look_for)]}', icon_url=ctx.author.avatar_url)
+
+        elif what_you_look_for in category_list:
+            msgembed = Embed(title=f'도움 - {what_you_look_for}', description=category_explain[category_list.index(what_you_look_for)], color=embedcolor)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 {what_you_look_for}', icon_url=ctx.author.avatar_url)
+        
+        else:
+            msgembed = Embed(title='🚫에러🚫', description='음.... 아직 그런 카테고리/명령어는 없습니다.', color=errorcolor)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
 @app.command(name='핑')
