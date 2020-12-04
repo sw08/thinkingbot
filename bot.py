@@ -250,6 +250,7 @@ async def _setInfo(ctx, *, content=None):
 async def _info(ctx, member : Member = None):
     if member == None:
         id = ctx.author.id
+        member = await ctx.get_user(id)
     else:
         id = member.id
     pointroute = f'{id}_info.txt'
@@ -645,7 +646,13 @@ async def _Gibu(ctx, point):
 @app.command(name='기부금')
 @can_use()
 async def _Gibugeum(ctx, arg1=None):
-    if arg1 == '회수':
+    if arg1 == None:
+        a = open('Gibu.txt', 'r').read()
+        msgembed = Embed(title='기부금', description=f'현재 기부금: `{a}`원', color=embedcolor)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
+
+    else:
         a = int(open('Gibu.txt', 'r').read())
         writepoint(ctx.author.id, a+readpoint(ctx.author.id))
         msgembed = Embed(title='기부금 회수', description=f'`{a}`원이 회수되었습니다', color=embedcolor)
@@ -656,51 +663,6 @@ async def _Gibugeum(ctx, arg1=None):
         a.close()
 
 #에러 처리
-
-@_help.error
-async def _help_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        msgembed = Embed(title='도움', description='도움말', color=embedcolor)
-        msgembed.set_thumbnail(url='https://thinkingbot.kro.kr/profile.png')
-        msgembed.add_field(name='일반', value='`일반 명령어들`', inline=False)
-        msgembed.add_field(name='포인트', value='`포인트 관련 명령어들`', inline=False)
-        msgembed.add_field(name='수학', value='`수학 관련 명령어들`', inline=False)
-        msgembed.add_field(name='지원', value='`봇 관련 지원 명령어들`', inline=False)
-        msgembed.add_field(name='관리자', value='`관리자 전용 명령어들`', inline=False)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움 (명령어/카테고리)', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
-
-@_Gibugeum.error
-async def _Gibugeum_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        a = open('Gibu.txt', 'r').read()
-        msgembed = Embed(title='기부금', description=f'현재 기부금: `{a}`원', color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
-
-@_info.error
-async def _info_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        pointroute = f'{ctx.author.id}_info.txt'
-        b = True
-        try:
-            a = open(pointroute, 'r')
-        except FileNotFoundError:
-            b = False
-            userinfo = f'내용이 없습니다. `{prefix}소개설정` 명령어로 소개말을 설정하세요.'
-        if b:
-            a.close()
-            a = open(pointroute, 'r', encoding='utf-8')
-            userinfo = a.read()
-            a.close()
-        pointroute = f'{ctx.author.id}.txt'
-        msgembed = Embed(title=str(ctx.author), description=userinfo, color=embedcolor)
-        msgembed.set_thumbnail(url=str(ctx.author.avatar_url))
-        msgembed.add_field(name='유저 ID', value=f'{ctx.author.id}')
-        point = readpoint(ctx.author.id)
-        msgembed.add_field(name='💵유저 포인트💵', value=point)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
 
 @app.event
 async def on_command_error(ctx, error):
