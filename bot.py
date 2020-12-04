@@ -668,7 +668,12 @@ async def _Gibugeum(ctx, arg1=None):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CommandNotFound):
         pass
+    elif isinstance(error, commands.errors.MissingRequiredArgument):
+        msgembed = Embed(title='사용법', description=f'{ctx.command.name}의 사용법은 `{prefix}{func_footer[func_list.index(ctx.command.name)]}` 입니다', color=embedcolor)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
     else:
-        await ctx.send(embed=Embed(title="에러 발생", description=f"```{error}```"))
-
+        msgembed = Embed(title="에러 발생", description=f"```{error}```", color=embedcolor)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
 app.run(token)
