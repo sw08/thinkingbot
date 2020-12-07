@@ -250,7 +250,7 @@ async def _setInfo(ctx, *, content=None):
 async def _info(ctx, member : Member = None):
     if member == None:
         id = ctx.author.id
-        member = await ctx.get_user(id)
+        member = app.get_user(id)
     else:
         id = member.id
     pointroute = f'{id}_info.txt'
