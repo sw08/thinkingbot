@@ -646,13 +646,7 @@ async def _Gibu(ctx, point):
 @app.command(name='기부금')
 @can_use()
 async def _Gibugeum(ctx, arg1=None):
-    if arg1 == None:
-        a = open('Gibu.txt', 'r').read()
-        msgembed = Embed(title='기부금', description=f'현재 기부금: `{a}`원', color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
-
-    else:
+    if arg1 == '회수':
         a = int(open('Gibu.txt', 'r').read())
         writepoint(ctx.author.id, a+readpoint(ctx.author.id))
         msgembed = Embed(title='기부금 회수', description=f'`{a}`원이 회수되었습니다', color=embedcolor)
@@ -661,6 +655,11 @@ async def _Gibugeum(ctx, arg1=None):
         a = open('Gibu.txt', 'w')
         a.write('0')
         a.close()
+    else:
+        a = open('Gibu.txt', 'r').read()
+        msgembed = Embed(title='기부금', description=f'현재 기부금: `{a}`원', color=embedcolor)
+        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+        await ctx.send(embed=msgembed)
 
 #에러 처리
 
