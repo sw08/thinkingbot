@@ -34,7 +34,9 @@ MEMBERS = [
     557119176590884864, #지영
     441202161481809922, #심심러
     594183416266752000, #빵세준
-    674813875291422720 #tim
+    674813875291422720, #tim
+    673776952578146315, #All PGS
+    717044065635532810 #Decave
 ]
 
 category_list = [
@@ -339,6 +341,7 @@ async def _serverinfo(ctx):
     msgembed.add_field(name='서버 인원수', value=f'`{server.member_count}`', inline=True)
     msgembed.add_field(name='서버 생성일', value=str(server.created_at)[:19], inline=True)
     msgembed.add_field(name='서버 부스트', value=f'{server.premium_tier}티어, {server.premium_subscription_count}개', inline=True)
+    await ctx.send(embed=msgembed)
 
 #수학 카테고리
 
