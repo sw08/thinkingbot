@@ -400,7 +400,7 @@ async def _prime(ctx, start, end):
 
 #지원 카테고리
 
-@app.command(name='봇정보')
+@app.command(name='봇정보   ')
 @can_use()
 async def _botinfo(ctx):
     msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
@@ -565,7 +565,7 @@ async def eval_fn(ctx, *, cmd):
     except Exception as a:
         result = a
     if result == '':
-        result = None
+        result = 'None'
     msgembed.add_field(name="**OUTPUT**", value=f'```py\n{result}```', inline=False)    
     await ctx.send(embed=msgembed)
 
