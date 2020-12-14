@@ -33,7 +33,6 @@ MEMBERS = [
     734560292024877056, #blackai
     557119176590884864, #지영
     441202161481809922, #심심러
-    594183416266752000, #빵세준
     674813875291422720, #tim
     673776952578146315, #All PGS
     717044065635532810 #Decave
@@ -568,7 +567,7 @@ async def eval_fn(ctx, *, cmd):
         result = 'None'
     msgembed.add_field(name="**OUTPUT**", value=f'```py\n{result}```', inline=False)    
     await ctx.send(embed=msgembed)
-
+    
 #포인트 카테고리
 
 @app.command(name='도박')
