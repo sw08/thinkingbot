@@ -399,7 +399,7 @@ async def _prime(ctx, start, end):
 
 #지원 카테고리
 
-@app.command(name='봇정보   ')
+@app.command(name='봇정보')
 @can_use()
 async def _botinfo(ctx):
     msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
@@ -556,7 +556,8 @@ async def eval_fn(ctx, *, cmd):
             'app': app,
             'commands': commands,
             'ctx': ctx,
-            '__import__': __import__
+            '__import__': __import__,
+            'bot': app
             }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
