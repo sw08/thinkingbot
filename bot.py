@@ -534,7 +534,11 @@ async def _공지(ctx, *, msg):
         c = b.read().split('\n')
         c.remove('')
         for i in range(len(c)):
-            await app.get_channel(int(c[i].replace('\n', ''))).send(embed=msgembed)
+            channel = app.get_channel(int(c[i].replace('\n', '')))
+            try:
+                await channel.send(embed=msgembed)
+            except Exception as a:
+                await ctx.send(f'에러 발생: {a}\n\n{channel.guild}')
     b.close()
 
 @app.command(name='실행')
