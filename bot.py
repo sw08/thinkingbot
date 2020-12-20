@@ -402,7 +402,7 @@ async def _prime(ctx, start, end):
 @app.command(name='봇정보')
 @can_use()
 async def _botinfo(ctx):
-    msgembed = Embed(title='ThinkingBot Beta#7894',description='', color=embedcolor)
+    msgembed = Embed(title='ThinkingBot#0663',description='', color=embedcolor)
     msgembed.add_field(name='개발자', value='Team Orora')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
