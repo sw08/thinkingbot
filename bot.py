@@ -405,7 +405,7 @@ async def _botinfo(ctx):
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
     msgembed.add_field(name='버전', value='1.5.7 - 20201220 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
-    msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](https://discord.com/api/oauth2/authorize?client_id=750557247842549871&permissions=0&scope=bot)\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
+    msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](http://invite.thinkingbot.kro.kr)\n[공식 서포트 서버](https://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
@@ -518,7 +518,7 @@ async def _공지(ctx, *, msg):
     time1 = kor_time.strftime('%Y/%m/%d %H:%M')
     a = True
     msgembed = Embed(title='📢봇공지📢', description='', color=embedcolor)
-    msgembed.add_field(name='ㅤ', value=f'{msg}\n\n-------------\n\n[공식 서포트 서버](https://discord.gg/ASvgRjX)\n[공식 홈페이지](http://thinkingbot.kro.kr)', inline=False)
+    msgembed.add_field(name='ㅤ', value=f'{msg}\n\n-------------\n\n[공식 서포트 서버](http://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[ThinkingBot 초대](http://invite.thinkingbot.kro.kr)', inline=False)
     msgembed.set_footer(text=f'{ctx.author} | {time1}', icon_url=ctx.author.avatar_url)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
     try:
