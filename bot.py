@@ -13,6 +13,7 @@ from pytz import timezone
 from datetime import timedelta
 import ast
 import koreanbots
+from PIL import Image
 
 #기본 변수 설정
 
@@ -44,8 +45,8 @@ category_list = [
 ]
 
 category_explain = [
-    '`도움`, `봇정보`, `핑`',
-    '`정보`, `소개설정`, `파일생성`, `찬반투표`, `공지설정`, `공지취소`, `서버정보`',
+    '`공지설정`, `공지취소`, `도움`, `봇정보`, `핑`',
+    '`정보`, `소개설정`, `파일생성`, `찬반투표`, `서버정보`, `색보기`',
     '`밴`, `언밴`, `관리자송금`, `공지`, `실행`',
     '`사칙연산`, `일차풀기`, `소수`',
     '`도박`, `송금`, `기부`, `기부금`, `출석`'
@@ -74,7 +75,8 @@ func_list = [
     '서버정보',
     '소수',
     '기부',
-    '기부금'
+    '기부금',
+    '색보기'
 ]
 
 func_footer = [
@@ -100,7 +102,8 @@ func_footer = [
     '서버정보',
     '소수 (첫번째 값) (두번째 값)',
     '기부 (기부할 포인트)',
-    '기부금 (회수/None)'
+    '기부금 (회수/None)',
+    '색보기 (RGB코드, #XXXXXX)'
 ]
 
 func_explain = [
@@ -126,7 +129,8 @@ func_explain = [
     '서버 정보 확인',
     '첫번째 값과 두번째 값 사이의 소수들을 구함',
     '입력한 포인트만큼 기부함',
-    '기부금을 확인하거나 회수함'
+    '기부금을 확인하거나 회수함',
+    'RGB 코드의 색상을 확인함'
 ]
 
 embedcolor = 0x00ffff
@@ -275,6 +279,20 @@ async def _makefile(ctx, filename, *, content):
     await ctx.send(file=file1)
     os.remove(filename)
 
+@app.command(name='색보기', aliases=['색', '컬러', '컬러보기'])
+@can_use()
+async def _seecolor(ctx, color):
+    try:
+        imgcolor = (int('0x' + color[1:3], 16), int('0x' + color[3:5], 16), int('0x' + color[5:7], 16))
+        img = Image.new("RGB", (512,512), imgcolor)
+        img.save("color.png")
+        await ctx.send(file=File('color.png'))
+        msgembed = Embed(title='완료', description='성공적으로 완료되었습니다', color=embedcolor)
+    except Exception as error:
+        msgembed = Embed(title='에러', description='이런. 뭔가가 잘못된 것 같아요. 입력값은 RGB, `#XXXXXX` 형태입니다', color=errorcolor)
+    msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+    await ctx.send(embed=msgembed)
+
 @app.command(name='찬반투표')
 @can_use()
 async def _devote_tof(ctx, *, content):
@@ -403,7 +421,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발자', value='Team Orora')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `Decave#9999`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.5.7 - 20201220 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.6.0 - 20201222 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](http://invite.thinkingbot.kro.kr)\n[공식 서포트 서버](https://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
