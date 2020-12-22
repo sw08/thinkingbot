@@ -418,11 +418,11 @@ async def _prime(ctx, start, end):
 @app.command(name='봇정보')
 @can_use()
 async def _botinfo(ctx):
-    msgembed = Embed(title=app.user,description='', color=embedcolor)
+    msgembed = Embed(title=f'{app.user}',description='', color=embedcolor)
     msgembed.add_field(name='개발 팀', value='Team Orora')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.6.0 - 20201222 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.6.1 - 20201222 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](http://invite.thinkingbot.kro.kr)\n[공식 서포트 서버](https://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
