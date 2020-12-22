@@ -287,6 +287,7 @@ async def _seecolor(ctx, color):
         img = Image.new("RGB", (512,512), imgcolor)
         img.save("color.png")
         await ctx.send(file=File('color.png'))
+        os.remove('color.png')
         msgembed = Embed(title='완료', description='성공적으로 완료되었습니다', color=embedcolor)
     except Exception as error:
         msgembed = Embed(title='에러', description='이런. 뭔가가 잘못된 것 같아요. 입력값은 RGB, `#XXXXXX` 형태입니다', color=errorcolor)
