@@ -35,6 +35,15 @@ OWNERS = [
     441202161481809922 #심심러
 ]
 
+SpecialDays = [
+    '1225', #크리스마스
+    '0101', #신정
+    '0902', #ThinkingBot 탄생일
+    '0505', #어린이날
+    '0815', #광복절
+    '1003' #개천절
+]
+
 category_list = [
     '지원',
     '일반',
@@ -227,8 +236,15 @@ async def _chulseok(ctx):
         b = False
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id) + 100
+        content = f'출석이 완료되었습니다. \n 현재 포인트: `{point}`'
+        if date in SpecialDays:
+            point += 400
+            content = content + '\n공휴일에는 출석시 400포인트를 더 받습니다.\n구정과 추석은 음력인 관계로 없습니다.'
+        if kor_time.weekday() >= 5:
+            point += 50
+            content = content + '\n주말에는 출석시 50포인트를 더 받습니다.'
         writepoint(ctx.author.id, point)
-        msgembed = Embed(title='출석 완료', description=f'출석이 완료되었습니다. \n 현재 포인트: `{point}`', color=embedcolor)
+        msgembed = Embed(title='출석 완료', description=content, color=embedcolor)
     a.close()
     if b:
         msgembed = Embed(title='🚫에러🚫', description='이미 출석했습니다', color=errorcolor)
@@ -421,7 +437,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발 팀', value='Team Orora')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.6.1 - 20201222 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.6.2 - 20201223 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](http://invite.thinkingbot.kro.kr)\n[공식 서포트 서버](https://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
