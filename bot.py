@@ -707,7 +707,8 @@ async def on_command_error(ctx, error):
         msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=msgembed)
     else:
-        msgembed = Embed(title="에러 발생", description=f"```{error}```", color=embedcolor)
-        msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=msgembed)
+        if ctx.author.id in OWNERS:
+            msgembed = Embed(title="에러 발생", description=f"```{error}```", color=embedcolor)
+            msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=msgembed)
 app.run(token)
