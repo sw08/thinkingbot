@@ -606,6 +606,12 @@ async def eval_fn(ctx, *, cmd):
         result = 'None'
     msgembed.add_field(name="**OUTPUT**", value=f'```py\n{result}```', inline=False)    
     await ctx.send(embed=msgembed)
+
+@app.command(name='리스타트', aliases=['재부팅', '리로드', '재시작'])
+@can_use()
+@is_owner()
+async def _restart(ctx):
+    await app.close()
     
 #포인트 카테고리
 
