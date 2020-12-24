@@ -240,7 +240,7 @@ async def _chulseok(ctx):
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id) + 100
         content = f'출석이 완료되었습니다. \n 현재 포인트: `{point}`'
-        if date in SpecialDays:
+        if str(kor_time.strftime('%m%d')) in SpecialDays:
             point += 400
             content = content + '\n공휴일에는 출석시 400포인트를 더 받습니다.\n구정과 추석은 음력인 관계로 없습니다.'
         if kor_time.weekday() >= 5:
