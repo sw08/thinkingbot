@@ -239,14 +239,14 @@ async def _chulseok(ctx):
         b = False
         a = open(ifyouchulseoked, 'w')
         point = readpoint(ctx.author.id) + 100
+        content = '출석이 완료되었습니다.'
         if str(kor_time.strftime('%m%d')) in SpecialDays:
             point += 400
-            content = content + '\n공휴일에는 출석시 400포인트를 더 받습니다.\n구정과 추석은 음력인 관계로 없습니다.'
+            content = content + f'\n현재 포인트: `{point}`\n\n공휴일에는 출석시 400포인트를 더 받습니다.\n구정과 추석은 음력인 관계로 없습니다.'
         if kor_time.weekday() >= 5:
             point += 50
-            content = content + '\n주말에는 출석시 50포인트를 더 받습니다.'
+            content = content + f'\n현재 포인트: `{point}`\n\n주말에는 출석시 50포인트를 더 받습니다.'
         writepoint(ctx.author.id, point)
-        content = f'출석이 완료되었습니다. \n 현재 포인트: `{point}`'
         msgembed = Embed(title='출석 완료', description=content, color=embedcolor)
     a.close()
     if b:
