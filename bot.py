@@ -212,7 +212,7 @@ def get_prime(start, end):
 
 #이벤트 처리
 
-@app.event
+@app.event  
 async def on_ready():
     print('구동 시작')
     game = Game(f'{prefix}도움')
@@ -440,7 +440,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발 팀', value='Team Orora')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.6.3 - 20201224 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.6.4 - 20201226 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](http://invite.thinkingbot.kro.kr)\n[공식 서포트 서버](https://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
@@ -566,13 +566,12 @@ async def _공지(ctx, *, msg):
         await ctx.send('공지채널없음')
     if a:
         c = b.read().split('\n')
-        c.remove('')
         for i in range(len(c)):
             channel = app.get_channel(int(c[i].replace('\n', '')))
             try:
                 await channel.send(embed=msgembed)
             except Exception as a:
-                await ctx.send(f'에러 발생: {a}\n\n{channel.guild}')
+                await ctx.send(f'에러 발생: {a}\n\n{channel.guild}\n\n{channel.name}')
     b.close()
 
 @app.command(name='실행')
@@ -717,4 +716,5 @@ async def on_command_error(ctx, error):
             msgembed = Embed(title="에러 발생", description=f"```{error}```", color=embedcolor)
             msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
             await ctx.send(embed=msgembed)
+            print(error)
 app.run(token)
