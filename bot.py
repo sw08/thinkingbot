@@ -246,7 +246,7 @@ async def _chulseok(ctx):
         if kor_time.weekday() >= 5:
             point += 50
             content = content +'\n\n주말에는 출석시 50포인트를 더 받습니다.'
-        content = content + f'\n\n현재 포인트: {point}'
+        content = content + f'\n\n현재 포인트: `{point}`'
         writepoint(ctx.author.id, point)
         msgembed = Embed(title='출석 완료', description=content, color=embedcolor)
     a.close()
