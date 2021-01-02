@@ -309,7 +309,7 @@ async def _seecolor(ctx, color):
         os.remove('color.png')
         msgembed = Embed(title='완료', description='성공적으로 완료되었습니다', color=embedcolor)
     except Exception as error:
-        msgembed = Embed(title='에러', description='이런. 뭔가가 잘못된 것 같아요. 입력값은 RGB, `#XXXXXX` 형태입니다', color=errorcolor)
+        msgembed = Embed(title='에러', description='이런. 뭔가가 잘못된 것 같아요. 입력값은 `#XXXXXX` 형태입니다', color=errorcolor)
     msgembed.set_footer(text=f'{ctx.author} | {prefix}도움', icon_url=ctx.author.avatar_url)
     await ctx.send(embed=msgembed)
 
@@ -441,7 +441,7 @@ async def _botinfo(ctx):
     msgembed.add_field(name='개발 팀', value='Team Orora')
     msgembed.add_field(name='도움을 주신 분들', value='`huntingbear21#4317`님, `koder_ko#8504`님, `Scott7777#5575`님, `Minibox#3332`님 등 많은 분들께 감사드립니다.', inline=False)
     msgembed.add_field (name='상세정보', value='다른 봇에서는 볼 수 없는 독특한 기능들이 많이 있음', inline=False)
-    msgembed.add_field(name='버전', value='1.7.0 - 20210102 릴리즈', inline=False)
+    msgembed.add_field(name='버전', value='1.7.1 - 20210102 릴리즈', inline=False)
     msgembed.add_field(name='개발언어 및 라이브러리', value='파이썬, discord.py', inline=False)
     msgembed.add_field(name='링크', value='[깃허브 바로가기](https://github.com/sw08/thinkingbot)\n[봇 초대 링크](http://invite.thinkingbot.kro.kr)\n[공식 서포트 서버](https://support.thinkingbot.kro.kr)\n[공식 홈페이지](http://thinkingbot.kro.kr)\n[KoreanBots](https://koreanbots.dev/bots/750557247842549871)', inline=False)
     msgembed.set_thumbnail(url="https://sw08.github.io/cloud/profile.png")
